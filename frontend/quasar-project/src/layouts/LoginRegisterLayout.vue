@@ -21,7 +21,7 @@
 
 <style scoped>
 .gradient-background {
-  background: linear-gradient(to right, #394053, #FF736F); /* Example gradient */
+  background: linear-gradient(to right, #cc2936, #ffffff, #878e88); /* Example gradient */
   min-height: 100vh; /* Ensure it covers the full height */
 }
 </style>

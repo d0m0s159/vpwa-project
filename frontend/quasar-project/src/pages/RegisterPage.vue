@@ -55,13 +55,13 @@
         outlined
         hint="Repeat password"
         type="password"
-        class="q-mb-md"
+        class="q-mb-lg"
       />
 
       <div class="row justify-center">
         <q-btn rounded dense color="primary" size="lg" label="Register" />
       </div>
-      
+
     </div>
   </q-page>
 </template>
