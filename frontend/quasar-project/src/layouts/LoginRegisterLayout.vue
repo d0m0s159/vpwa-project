@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh lpR fFf" class="gradient-background">
 
     <q-page-container>
       <router-view />
@@ -18,3 +18,10 @@
 
   </q-layout>
 </template>
+
+<style scoped>
+.gradient-background {
+  background: linear-gradient(to right, #394053, #FF736F); /* Example gradient */
+  min-height: 100vh; /* Ensure it covers the full height */
+}
+</style>
