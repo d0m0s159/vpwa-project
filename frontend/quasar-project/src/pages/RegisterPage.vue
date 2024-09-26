@@ -70,6 +70,7 @@
             label="Register"
             class="q-mb-sm q-px-lg"
             no-caps
+            to="/auth/login"
           />
         </div>
       </q-form>
@@ -77,7 +78,10 @@
       <q-separator />
 
       <q-card-section class="text-center">
-        <div class="text-caption">Already have an account? Log in here</div>
+        <div class="text-caption">
+          Already have an account?
+          <router-link to="/auth/login"> Log in here </router-link>
+        </div>
       </q-card-section>
     </q-card>
   </q-page>

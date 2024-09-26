@@ -36,14 +36,21 @@
             label="Login"
             class="q-mb-sm q-px-lg"
             no-caps
+            to="/"
           />
       </q-form>
 
       <q-separator />
 
       <q-card-section class="text-center">
-        <div class="text-caption">Don't have an account? Register now</div>
+        <div class="text-caption">
+          Don't have an account?
+          <router-link to="/auth/register">
+            Register now
+          </router-link>
+        </div>
       </q-card-section>
+
     </q-card>
   </q-page>
   </template>
