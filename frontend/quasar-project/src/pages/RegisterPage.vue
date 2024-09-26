@@ -105,12 +105,15 @@ export default {
 }
 
 h2 {
-    color: #ffffff
-  }
+  color: #ffffff;
+}
 
 @media (max-width: 600px) {
   h2 {
     font-size: 2.5rem;
+  }
+  .q-card {
+    width: 80vw;
   }
 }
 </style>

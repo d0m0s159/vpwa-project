@@ -75,5 +75,8 @@
     h2 {
       font-size: 2.25rem;
     }
+    .q-card {
+        width: 80vw;
+    }
   }
   </style>
