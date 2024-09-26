@@ -1,9 +1,7 @@
 <template>
-  <q-page class="row items-center justify-center">
+  <q-page class="column items-center justify-center">
+    <h2>Create an account</h2>
     <q-card class="q-pa-lg">
-      <q-card-section class="q-mb-sm bg-primary text-white text-center">
-        <div class="text-h5">CREATE AN ACCOUNT</div>
-      </q-card-section>
       <q-separator />
       <q-form class="text-center q-mb-sm">
         <q-input
@@ -63,10 +61,24 @@
         />
 
         <div class="row justify-center">
-          <q-btn type='submit' rounded dense color="primary" size="lg" label="Register" />
+          <q-btn
+            type="submit"
+            rounded
+            dense
+            color="primary"
+            size="lg"
+            label="Register"
+            class="q-mb-sm q-px-lg"
+            no-caps
+          />
         </div>
-
       </q-form>
+
+      <q-separator />
+
+      <q-card-section class="text-center">
+        <div class="text-caption">Already have an account? Log in here</div>
+      </q-card-section>
     </q-card>
   </q-page>
 </template>
@@ -87,4 +99,18 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.q-card {
+  width: 360px;
+}
+
+h2 {
+    color: #ffffff
+  }
+
+@media (max-width: 600px) {
+  h2 {
+    font-size: 2.5rem;
+  }
+}
+</style>

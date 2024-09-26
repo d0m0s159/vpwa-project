@@ -1,23 +1,22 @@
 <template>
-  <q-page class="row items-center justify-center">
+  <q-page class="column items-center justify-center">
+    <h2 class>Log into your account</h2>
     <q-card class="q-pa-lg">
-      <q-card-section class="bg-primary text-white text-center">
-        <div class="text-h4">LOGIN</div>
-      </q-card-section>
-      <q-separator />
       <q-form class="text-center q-mb-sm">
-        <q-input 
-        class="q-my-md" 
-        outlined 
+        <q-input
+        class="q-my-md"
+        outlined
         v-model="name"
-        type="text" 
-        name="nickname"  />
+        type="text"
+        name="nickname"
+        hint="Nickname"
+        />
         <q-input
           class="q-my-md"
           v-model="password"
           outlined
           :type="isPwd ? 'password' : 'text'"
-          hint="Password with toggle"
+          hint="Password"
         >
           <template v-slot:append>
             <q-icon
@@ -27,7 +26,17 @@
             />
           </template>
         </q-input>
-        <q-btn color="primary" type="submit" label="login"></q-btn>
+
+          <q-btn
+            type="submit"
+            rounded
+            dense
+            color="primary"
+            size="lg"
+            label="Login"
+            class="q-mb-sm q-px-lg"
+            no-caps
+          />
       </q-form>
 
       <q-separator />
@@ -38,7 +47,7 @@
     </q-card>
   </q-page>
   </template>
-  
+
   <script>
 
   export default {
@@ -52,9 +61,19 @@
     }
   }
   </script>
-  
+
   <style>
   .q-card {
     width: 360px;
+  }
+
+  h2 {
+    color: #ffffff
+  }
+
+  @media (max-width: 600px) {
+    h2 {
+      font-size: 2.25rem;
+    }
   }
   </style>
