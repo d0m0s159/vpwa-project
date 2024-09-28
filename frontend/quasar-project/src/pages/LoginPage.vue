@@ -2,7 +2,7 @@
   <q-page class="column items-center justify-center">
     <h2 class>Log into your account</h2>
     <q-card class="q-pa-lg">
-      <q-form class="text-center q-mb-sm">
+      <q-form class="text-center q-mb-sm" @submit="onSubmit" ref="loginForm">
         <q-input
         class="q-my-md"
         outlined
@@ -10,6 +10,7 @@
         type="text"
         name="nickname"
         hint="Nickname"
+        :rules="[val => !!val || 'Nickname required']"
         />
         <q-input
           class="q-my-md"
@@ -17,6 +18,7 @@
           outlined
           :type="isPwd ? 'password' : 'text'"
           hint="Password"
+          :rules="[val => !!val || 'Password required']"
         >
           <template v-slot:append>
             <q-icon
@@ -28,7 +30,7 @@
         </q-input>
 
           <q-btn
-            type="submit"
+            type="button"
             rounded
             dense
             color="primary"
@@ -36,7 +38,7 @@
             label="Login"
             class="q-mb-sm q-px-lg"
             no-caps
-            to="/"
+            @click="validate"
           />
       </q-form>
 
@@ -64,6 +66,15 @@
         name: '',
         password: '',
         isPwd: true
+      }
+    },
+    methods: {
+      validate () {
+        this.$refs.loginForm.validate().then((isValid) => {
+          if(isValid){
+            this.$router.push('/');
+          }
+        })
       }
     }
   }

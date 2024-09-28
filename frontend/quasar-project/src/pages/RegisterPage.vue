@@ -3,7 +3,7 @@
     <h2>Create an account</h2>
     <q-card class="q-pa-lg">
       <q-separator />
-      <q-form @submit="onSubmit" class="text-center q-mb-sm">
+      <q-form @submit="onSubmit" class="text-center q-mb-sm" ref="registerForm">
         <q-input
           v-model="email"
           outlined
@@ -77,7 +77,7 @@
 
         <div class="row justify-center">
           <q-btn
-            type="submit"
+            type="button"
             rounded
             dense
             color="primary"
@@ -85,7 +85,7 @@
             label="Register"
             class="q-mb-sm q-px-lg"
             no-caps
-            to="/auth/login"
+            @click="validate"
           />
         </div>
       </q-form>
@@ -117,9 +117,12 @@ export default {
     };
   },
   methods: {
-    onSubmit() {
-      // Handle form submission
-      console.log('Form submitted');
+    validate () {
+      this.$refs.registerForm.validate().then((isValid) => {
+        if(isValid){
+          this.$router.push('/');
+        }
+      })
     }
   }
 };
