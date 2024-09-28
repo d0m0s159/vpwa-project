@@ -9,38 +9,26 @@
 
         <q-btn
           round
-          color="white"
-          @click="menu = !menu"
-          ref="dropdownButton">
+          color="white">
+
           <q-avatar size="28px">
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
           </q-avatar>
 
+          <q-menu style="width: 150px;">
+            <q-list style="min-width: 100px">
+              <q-item clickable v-close-popup>
+                <q-avatar icon="person"></q-avatar>
+                <q-item-section>Profile</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup to="/auth/login">
+                <q-avatar icon="directions" />
+                <q-item-section>Log out</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
 
-        <q-menu
-          v-model="menu"
-          anchor="bottom right"
-          self="top right"
-          :target="$refs.dropdownButton">
-
-          <q-list style="min-width: 120px">
-            <q-item clickable v-close-popup>
-              <q-item-section side>
-                <q-avatar icon="person" />
-              </q-item-section>
-              <q-item-section>Profile</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup>
-              <q-item-section side>
-                <q-avatar
-                icon="directions"/>
-              </q-item-section>
-              <q-item-section>Log out</q-item-section>
-            </q-item>
-          </q-list>
-
-        </q-menu>
-      </q-btn>
+        </q-btn>
 
       </q-toolbar>
     </q-header>
@@ -55,15 +43,7 @@
 </style>
 
 <script>
-import { ref } from 'vue';
-
 export default {
-  setup () {
-    const menu = ref(false);
-    return {
-      menu,
-      dropdownButton
-    };
-  },
+
 }
 </script>
