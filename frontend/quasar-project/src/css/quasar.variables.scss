@@ -13,7 +13,11 @@
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
 
 $primary: #cc2936;
-$secondary: #878e88;
+$secondary: linear-gradient(
+    to right,
+    #cc2936,
+    #aa15b8
+  );
 $accent: #273b09;
 
 $dark: #394053;
