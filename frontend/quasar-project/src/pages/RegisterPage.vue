@@ -3,13 +3,14 @@
     <h2>Create an account</h2>
     <q-card class="q-pa-lg">
       <q-separator />
-      <q-form class="text-center q-mb-sm">
+      <q-form @submit="onSubmit" class="text-center q-mb-sm">
         <q-input
           v-model="email"
           outlined
           hint="E-mail"
           type="email"
           class="q-mb-sm"
+          :rules="[val => !!val || 'E-mail is required', val => /.+@.+\..+/.test(val) || 'E-mail must be valid']"
         />
 
         <q-input
@@ -18,6 +19,7 @@
           hint="Nickname"
           type="text"
           class="q-mb-sm"
+          :rules="[val => !!val || 'Nickname is required']"
         />
 
         <q-input
@@ -26,6 +28,7 @@
           hint="First Name"
           type="text"
           class="q-mb-sm"
+          :rules="[val => !!val || 'First Name is required']"
         />
 
         <q-input
@@ -34,6 +37,7 @@
           hint="Surname"
           type="text"
           class="q-mb-sm"
+          :rules="[val => !!val || 'Surname is required']"
         />
 
         <q-input
@@ -42,6 +46,14 @@
           :type="isPwd ? 'password' : 'text'"
           hint="Password"
           class="q-mb-sm"
+          :rules="[
+            val => !!val || 'Password is required',
+            val => val.length >= 8 || 'Password must be at least 8 characters long',
+            val => /[A-Z]/.test(val) || 'Password must contain at least one uppercase letter',
+            val => /[a-z]/.test(val) || 'Password must contain at least one lowercase letter',
+            val => /[0-9]/.test(val) || 'Password must contain at least one number',
+            val => /[!@#$%^&*]/.test(val) || 'Password must contain at least one special character'
+          ]"
         >
           <template v-slot:append>
             <q-icon
@@ -58,6 +70,9 @@
           hint="Repeat password"
           type="password"
           class="q-mb-lg"
+          :rules="[
+            val => !!val || 'Repeat the password you typed in the previous field',
+          ]"
         />
 
         <div class="row justify-center">
@@ -88,6 +103,7 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
@@ -100,6 +116,12 @@ export default {
       isPwd: true,
     };
   },
+  methods: {
+    onSubmit() {
+      // Handle form submission
+      console.log('Form submitted');
+    }
+  }
 };
 </script>
 
