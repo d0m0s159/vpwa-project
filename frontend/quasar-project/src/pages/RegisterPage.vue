@@ -11,6 +11,7 @@
           type="email"
           class="q-mb-sm"
           :rules="[val => !!val || 'E-mail is required', val => /.+@.+\..+/.test(val) || 'E-mail must be valid']"
+          
         />
 
         <q-input
@@ -77,7 +78,7 @@
 
         <div class="row justify-center">
           <q-btn
-            type="button"
+            type="submit"
             rounded
             dense
             color="primary"

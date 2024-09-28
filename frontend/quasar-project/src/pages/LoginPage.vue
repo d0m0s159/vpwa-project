@@ -30,7 +30,7 @@
         </q-input>
 
           <q-btn
-            type="button"
+            type="submit"
             rounded
             dense
             color="primary"
