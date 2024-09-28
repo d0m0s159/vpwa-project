@@ -2,25 +2,32 @@
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-secondary text-white">
       <q-toolbar>
+
         <q-toolbar-title>
           Slack
         </q-toolbar-title>
-        <q-btn 
-          round 
+
+        <q-btn
+          round
           color="white"
           @click="menu = !menu"
           ref="dropdownButton">
           <q-avatar size="28px">
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
           </q-avatar>
-        </q-btn>
+
+
         <q-menu
           v-model="menu"
           anchor="bottom right"
           self="top right"
-          :target="$refs.menuButton">
+          :target="$refs.dropdownButton">
+
           <q-list style="min-width: 120px">
             <q-item clickable v-close-popup>
+              <q-item-section side>
+                <q-avatar icon="person" />
+              </q-item-section>
               <q-item-section>Profile</q-item-section>
             </q-item>
             <q-item clickable v-close-popup>
@@ -33,6 +40,8 @@
           </q-list>
 
         </q-menu>
+      </q-btn>
+
       </q-toolbar>
     </q-header>
 
@@ -46,11 +55,15 @@
 </style>
 
 <script>
-export default {
-  data () {
+import { ref } from 'vue';
 
+export default {
+  setup () {
+    const menu = ref(false);
     return {
-    }
-  }
+      menu,
+      dropdownButton
+    };
+  },
 }
 </script>
