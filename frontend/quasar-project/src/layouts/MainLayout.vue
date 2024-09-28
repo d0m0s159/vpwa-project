@@ -7,18 +7,13 @@
         </q-toolbar-title>
         <q-btn 
           round 
-          color="white"
-          @click="menu = !menu"
-          ref="dropdownButton">
+          color="white">
           <q-avatar size="28px">
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
           </q-avatar>
-        </q-btn>
-        <q-menu
-          v-model="menu"
+          <q-menu
           anchor="bottom right"
-          self="top right"
-          :target="$refs.menuButton">
+          self="top right">
           <q-list style="min-width: 120px">
             <q-item clickable v-close-popup>
               <q-item-section>Profile</q-item-section>
@@ -31,8 +26,8 @@
               <q-item-section>Log out</q-item-section>
             </q-item>
           </q-list>
-
         </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -46,11 +41,9 @@
 </style>
 
 <script>
-export default {
-  data () {
 
-    return {
-    }
+export default {
+  setup () {
   }
 }
 </script>
