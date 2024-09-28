@@ -72,6 +72,7 @@
           class="q-mb-lg"
           :rules="[
             val => !!val || 'Repeat the password you typed in the previous field',
+            val => val === password || 'Field must equal the first password typed in'
           ]"
         />
 
@@ -120,7 +121,7 @@ export default {
     validate () {
       this.$refs.registerForm.validate().then((isValid) => {
         if(isValid){
-          this.$router.push('/');
+          this.$router.push('/auth/login');
         }
       })
     }
