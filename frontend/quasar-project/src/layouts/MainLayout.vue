@@ -15,8 +15,10 @@
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
           </q-avatar>
 
-          <q-menu style="width: 150px;">
-            <q-list style="min-width: 100px">
+          <q-menu 
+            class="menu"
+            :offset="[10,4]">
+            <q-list >
               <q-item clickable v-close-popup>
                 <q-avatar icon="person"></q-avatar>
                 <q-item-section>Profile</q-item-section>
@@ -32,6 +34,20 @@
 
       </q-toolbar>
     </q-header>
+    <q-drawer
+        show-if-above
+        :width="71"
+        class="bg-primary">
+        <q-scroll-area class="fit">
+          <q-list>
+            <q-item clickable class="q-pl-sm" v-for="n in 3" :key="n">
+              <q-avatar clickable size="3rem" class="channel-icon">
+                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+              </q-avatar>
+            </q-item>
+          </q-list>
+        </q-scroll-area>
+      </q-drawer>
 
     <q-page-container>
       <router-view/>
@@ -39,7 +55,15 @@
   </q-layout>
 </template>
 
-<style scoped>
+<style>
+  .menu {
+    width: 150px;
+    margin-top: 100px;
+  }
+  .channel-icon {
+    margin-top: 1rem;
+    background-color: white;
+  }
 </style>
 
 <script>

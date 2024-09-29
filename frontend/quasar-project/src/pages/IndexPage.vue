@@ -1,4 +1,4 @@
 <template>
-  <q-page class="">
+  <q-page>
   </q-page>
 </template>
