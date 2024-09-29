@@ -1,5 +1,9 @@
 <template>
   <q-page>
-    <h1>TEST</h1>
+    <h1>laslo ako nakodim unix time1!!!!!1!!!</h1>
   </q-page>
 </template>
+
+<style scoped>
+
+</style>
