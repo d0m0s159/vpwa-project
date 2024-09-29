@@ -3,6 +3,8 @@
     <q-header elevated class="bg-secondary text-white">
       <q-toolbar>
 
+        <q-btn dense flat round icon="menu" @click="toggleLeftDrawer" />
+
         <q-toolbar-title>
           Slack
         </q-toolbar-title>
@@ -34,10 +36,13 @@
 
       </q-toolbar>
     </q-header>
+
     <q-drawer
         show-if-above
         :width="72"
-        class="bg-primary">
+        class="bg-primary"
+        v-model="leftDrawerOpen"
+        side="left">
         <q-scroll-area class="fit">
           <q-list>
             <q-item clickable class="q-pl-sm" v-for="n in 3" :key="n" style="width: 50">
@@ -50,7 +55,7 @@
       </q-drawer>
 
     <q-page-container>
-      <example-component />
+      <router-view />
     </q-page-container>
 
   </q-layout>
@@ -68,7 +73,19 @@
 </style>
 
 <script>
-export default {
+import { ref } from 'vue'
 
+
+export default {
+  setup () {
+    const leftDrawerOpen = ref(false)
+
+    return {
+      leftDrawerOpen,
+      toggleLeftDrawer () {
+        leftDrawerOpen.value = !leftDrawerOpen.value
+      },
+    }
+  }
 }
 </script>
