@@ -15,7 +15,7 @@
             <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
           </q-avatar>
 
-          <q-menu 
+          <q-menu
             class="menu"
             :offset="[10,4]">
             <q-list >
@@ -36,7 +36,7 @@
     </q-header>
     <q-drawer
         show-if-above
-        :width="71"
+        :width="66"
         class="bg-primary">
         <q-scroll-area class="fit">
           <q-list>
@@ -61,7 +61,7 @@
     margin-top: 100px;
   }
   .channel-icon {
-    margin-top: 1rem;
+    margin: 6px 0;
     background-color: white;
   }
 </style>
