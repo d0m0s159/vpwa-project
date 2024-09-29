@@ -36,13 +36,13 @@
     </q-header>
     <q-drawer
         show-if-above
-        :width="66"
+        :width="72"
         class="bg-primary">
         <q-scroll-area class="fit">
           <q-list>
-            <q-item clickable class="q-pl-sm" v-for="n in 3" :key="n">
-              <q-avatar clickable size="3rem" class="channel-icon">
-                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
+            <q-item clickable class="q-pl-sm" v-for="n in 3" :key="n" style="width: 50">
+              <q-avatar clickable size="52px" class="channel-icon">
+                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="">
               </q-avatar>
             </q-item>
           </q-list>
@@ -50,8 +50,9 @@
       </q-drawer>
 
     <q-page-container>
-      <router-view/>
+      <example-component />
     </q-page-container>
+
   </q-layout>
 </template>
 
