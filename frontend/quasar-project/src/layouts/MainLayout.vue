@@ -40,7 +40,7 @@
     <q-drawer
         show-if-above
         :width="68"
-        class="bg-primary"
+        class="bg-primary right-drawer"
         v-model="leftDrawerOpen"
         side="left">
         <q-scroll-area class="fit"
@@ -48,8 +48,8 @@
         :vertical-thumb-style="verticalThumbStyle">
           <q-list>
             <q-item clickable class="q-pl-sm" v-for="n in 20" :key="n" style="width: 50">
-              <q-avatar clickable size="52px" class="channel-icon">
-                <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="">
+              <q-avatar clickable size="52px" class="channel-icon" text-color="black">
+                oh no
               </q-avatar>
             </q-item>
           </q-list>
@@ -85,7 +85,13 @@
     margin: 6px 0;
     background-color: white;
   }
-
+  .right-drawer {
+    background: linear-gradient(
+    to right,
+    #b1199f,
+    #aa15b8
+    );
+  }
 </style>
 
 <script>
