@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="hHh LpR fFf">
     <q-header elevated class="bg-secondary text-white">
       <q-toolbar>
 
@@ -39,13 +39,15 @@
 
     <q-drawer
         show-if-above
-        :width="72"
+        :width="68"
         class="bg-primary"
         v-model="leftDrawerOpen"
         side="left">
-        <q-scroll-area class="fit">
+        <q-scroll-area class="fit"
+        :horizontal-thumb-style="horizontalThumbStyle"
+        :vertical-thumb-style="verticalThumbStyle">
           <q-list>
-            <q-item clickable class="q-pl-sm" v-for="n in 3" :key="n" style="width: 50">
+            <q-item clickable class="q-pl-sm" v-for="n in 20" :key="n" style="width: 50">
               <q-avatar clickable size="52px" class="channel-icon">
                 <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg" class="">
               </q-avatar>
@@ -65,7 +67,7 @@
         v-model="leftDrawerOpen"
         side="right">
 
-      <q-btn outline="false">
+      <q-btn outline="false" unelevated>
         <q-avatar icon="terminal" clickable/>
       </q-btn>
 
@@ -83,11 +85,11 @@
     margin: 6px 0;
     background-color: white;
   }
+
 </style>
 
 <script>
 import { ref } from 'vue'
-
 
 export default {
   setup () {
@@ -96,10 +98,16 @@ export default {
 
     return {
       leftDrawerOpen,
-      rightDrawerOpen
+      rightDrawerOpen,
       /*toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       },*/
+      horizontalThumbStyle: {
+        opacity: 0,
+      },
+      verticalThumbStyle: {
+        width: '4px',
+      }
     }
   }
 }
