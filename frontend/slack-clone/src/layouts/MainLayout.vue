@@ -34,21 +34,6 @@
 
       </q-toolbar>
     </q-header>
-    <div>
-       <div class="q-pa-md q-mt-xl row justify-center">
-          <div style="width: 100%; max-width: 700px">
-            <MessageComponent
-            v-for="(message, index) in [...messages].reverse()"
-            :key="index" 
-            :name="message.name" 
-            :avatar="message.avatar" 
-            :text="message.text" 
-            :stamp="message.stamp"/>
-
-            
-          </div>
-     </div>  
-    </div>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -78,41 +63,15 @@
 
 <script lang="ts">
 import { ref } from 'vue'
-import MessageComponent from '../components/MessageComponent.vue'
 
 export default {
-  components: {
-    MessageComponent
-  },
   setup () {
     const leftDrawerOpen = ref(true);
     const rightDrawerOpen = ref(true);
 
-    const messages = [
-    {
-      name: 'me',
-      avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
-      text: ['This is my sent message'],
-      stamp: 'Just now'
-    },
-    {
-      name: 'Jane',
-      avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
-      text: ['This is a received message'],
-      stamp: '5 minutes ago'
-    },
-    {
-      name: 'John',
-      avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
-      text: ['Hey, what\'s up?'],
-      stamp: '10 minutes ago'
-    }
-  ]
-
     return {
       leftDrawerOpen,
       rightDrawerOpen,
-      messages,
       /*toggleLeftDrawer () {
         leftDrawerOpen.value = !leftDrawerOpen.value
       },*/

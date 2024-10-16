@@ -1,26 +1,38 @@
 <template>
   <q-page>
-<<<<<<< HEAD
-=======
     <div class="example-row-all-breakpoints">
-      <div class="col">
-        <div v-for="n in 3" :key="n">
-          <q-btn no-caps square unelevated size="0px" padding="0px" color="teal">
-            <q-avatar class="channel-icon" text-color="black">
-              new
-            </q-avatar>
-          </q-btn>
+      <div class="row">
+        <div class="col-2">
+          <div v-for="n in 3" :key="n">
+            <q-btn no-caps square unelevated size="0px" padding="0px" color="teal">
+              <q-avatar class="channel-icon" text-color="black">
+                new
+              </q-avatar>
+            </q-btn>
+          </div>
+          <div v-for="n in 20" :key="n">
+            <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
+              <q-avatar class="channel-icon" text-color="black">
+                oh no
+              </q-avatar>
+            </q-btn>
+          </div>
         </div>
-        <div v-for="n in 20" :key="n">
-          <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
-            <q-avatar class="channel-icon" text-color="black">
-              oh no
-            </q-avatar>
-          </q-btn>
+        <div class="col">
+          <div class="q-pa-md q-mt-xl">
+            <div style="width: 100%; max-width: 1000px">
+              <MessageComponent
+              v-for="(message, index) in [...messages].reverse()"
+              :key="index" 
+              :name="message.name" 
+              :avatar="message.avatar" 
+              :text="message.text" 
+              :stamp="message.stamp"/>              
+            </div>
+          </div>  
         </div>
       </div>
     </div>
->>>>>>> 6b204edf90c1dc00ab2c6b1acb58d31e857e3d37
   </q-page>
 </template>
 
@@ -43,9 +55,34 @@
 </style>
 
 <script>
+import MessageComponent from 'src/components/MessageComponent.vue';
 export default {
+  components: {
+    MessageComponent
+  },
   setup () {
+    const messages = [
+      {
+        name: 'me',
+        avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
+        text: ['This is my sent message'],
+        stamp: 'Just now'
+      },
+      {
+        name: 'Jane',
+        avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
+        text: ['This is a received message'],
+        stamp: '5 minutes ago'
+      },
+      {
+        name: 'John',
+        avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
+        text: ['Hey, what\'s up?'],
+        stamp: '10 minutes ago'
+      }
+    ]
     return {
+      messages,
       horizontalThumbStyle: {
         opacity: 0,
       },
