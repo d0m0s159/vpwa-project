@@ -2,7 +2,7 @@
   <q-page>
     <div class="example-row-all-breakpoints">
       <div class="row">
-        <div class="col-2">
+        <div class="col-auto">
           <div v-for="n in 3" :key="n">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="teal">
               <q-avatar class="channel-icon" text-color="black">
@@ -10,7 +10,7 @@
               </q-avatar>
             </q-btn>
           </div>
-          <div v-for="n in 20" :key="n">
+          <div v-for="n in 10" :key="n">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
               <q-avatar class="channel-icon" text-color="black">
                 oh no
@@ -18,8 +18,8 @@
             </q-btn>
           </div>
         </div>
-        <div class="col">
-          <div class="q-pa-md q-mt-xl">
+        <div class="col q-ml-sm self-end q-mb-sm">
+          <div class="q-pa-md q-mt-xl row">
             <div style="width: 100%; max-width: 1000px">
               <MessageComponent
               v-for="(message, index) in [...messages].reverse()"
@@ -29,7 +29,14 @@
               :text="message.text" 
               :stamp="message.stamp"/>              
             </div>
-          </div>  
+          </div>
+          <div class="row">
+            <q-input class="col input-message" outlined rounded v-model="text" label="Message">
+              <template v-slot:after>
+                <q-btn round dense flat icon="send" />
+              </template>
+            </q-input>
+          </div>
         </div>
       </div>
     </div>
@@ -40,13 +47,14 @@
   h1 {
     margin-top: 0px
   }
+
+  .input-message {
+    width: 100%;
+    max-width: 1050px;
+  }
   .channel-icon {
     margin: 6px;
     background-color: white;
-  }
-  .list-container {
-    width: 60px;
-
   }
 </style>
 
@@ -73,6 +81,12 @@ export default {
         avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
         text: ['This is a received message'],
         stamp: '5 minutes ago'
+      },
+      {
+        name: 'John',
+        avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
+        text: ['Hey, what\'s up?'],
+        stamp: '10 minutes ago'
       },
       {
         name: 'John',
