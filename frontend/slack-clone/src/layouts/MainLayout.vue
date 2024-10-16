@@ -38,7 +38,6 @@
     </q-header>
 
     <q-drawer
-        show-if-above
         :width="68"
         class="bg-primary right-drawer"
         v-model="leftDrawerOpen"
@@ -59,19 +58,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
-    <q-drawer
-        show-if-above
-        :width="300"
-        class="bg-primary"
-        v-model="leftDrawerOpen"
-        side="right">
-
-      <q-btn outline="false" unelevated>
-        <q-avatar icon="terminal" clickable/>
-      </q-btn>
-
-    </q-drawer>
 
   </q-layout>
 </template>
