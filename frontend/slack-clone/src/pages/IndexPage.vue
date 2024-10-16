@@ -1,8 +1,9 @@
 <template>
   <q-page>
     <div class="example-row-all-breakpoints">
-      <div class="row">
+      <div class="row justify-between">
         <div class="col-auto">
+          <div class="channel-list">
           <div v-for="n in 3" :key="n">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="teal">
               <q-avatar class="channel-icon" text-color="black">
@@ -17,17 +18,18 @@
               </q-avatar>
             </q-btn>
           </div>
+          </div>
         </div>
         <div class="col q-ml-sm self-end q-mb-sm">
           <div class="q-pa-md q-mt-xl row">
             <div style="width: 100%; max-width: 1000px">
               <MessageComponent
               v-for="(message, index) in [...messages].reverse()"
-              :key="index" 
-              :name="message.name" 
-              :avatar="message.avatar" 
-              :text="message.text" 
-              :stamp="message.stamp"/>              
+              :key="index"
+              :name="message.name"
+              :avatar="message.avatar"
+              :text="message.text"
+              :stamp="message.stamp"/>
             </div>
           </div>
           <div class="row">
@@ -55,6 +57,10 @@
   .channel-icon {
     margin: 6px;
     background-color: white;
+  }
+  .channel-list {
+    height: calc(100vh - 50px);
+    overflow-y: auto
   }
 </style>
 
