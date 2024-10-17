@@ -2,7 +2,6 @@
   <div>
     <q-chat-message
       :name="name"
-      :avatar="avatar"
       :text="text"
       :stamp="stamp"
       :sent="name == 'me'"

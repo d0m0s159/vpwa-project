@@ -11,7 +11,7 @@
               </q-avatar>
             </q-btn>
           </div>
-          <div v-for="n in 10" :key="n">
+          <div v-for="(channel, index) in channels" :key="index">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
               <q-avatar class="channel-icon" text-color="black">
                 oh no
@@ -24,10 +24,9 @@
           <div class="q-pa-md q-mt-xl row">
             <div style="width: 100%; max-width: 1000px">
               <MessageComponent
-              v-for="(message, index) in [...messages].reverse()"
+              v-for="(message, index) in messages"
               :key="index"
               :name="message.name"
-              :avatar="message.avatar"
               :text="message.text"
               :stamp="message.stamp"/>
             </div>
@@ -35,7 +34,7 @@
           <div class="row">
             <q-input class="col input-message" outlined rounded v-model="text" label="Message">
               <template v-slot:after>
-                <q-btn round dense flat icon="send" />
+                <q-btn round dense flat icon="send" @click="sendMsg" />
               </template>
             </q-input>
           </div>
@@ -64,52 +63,46 @@
   }
 </style>
 
-<style lang="sass">
+<script lang="ts">
+import { ref, computed } from 'vue';
+import MessageComponent from 'src/components/MessageComponent.vue'; 
+import { useChannelsStore } from 'src/components/stores/useChannelsStore';
+import { Message } from 'src/components/message';
 
-</style>
-
-<script>
-import MessageComponent from 'src/components/MessageComponent.vue';
 export default {
   components: {
     MessageComponent
   },
-  setup () {
-    const messages = [
-      {
-        name: 'me',
-        avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
-        text: ['This is my sent message'],
-        stamp: 'Just now'
-      },
-      {
-        name: 'Jane',
-        avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
-        text: ['This is a received message'],
-        stamp: '5 minutes ago'
-      },
-      {
-        name: 'John',
-        avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
-        text: ['Hey, what\'s up?'],
-        stamp: '10 minutes ago'
-      },
-      {
-        name: 'John',
-        avatar: 'https://cdn.quasar.dev/img/avatar3.jpg',
-        text: ['Hey, what\'s up?'],
-        stamp: '10 minutes ago'
-      }
-    ]
-    return {
-      messages,
-      horizontalThumbStyle: {
-        opacity: 0,
-      },
-      verticalThumbStyle: {
-        width: '4px',
-      }
+  setup() {
+    const store = useChannelsStore();
+
+    const channels = computed(() => store.channelList);
+
+    const messages = ref<Message[]>([]);
+    
+    const index = ref(0);
+
+    if (channels.value.length > 0 && channels.value[0].messageList) {
+      messages.value = channels.value[0].messageList;
     }
+
+    const text = ref('');
+
+    const sendMsg = () => {
+      const date = new Date();
+      const dateFormat = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
+      if (text.value) {
+        store.sendMessage('me', [text.value], dateFormat, index.value);
+        text.value = '';
+      }
+    };
+
+    return {
+      channels,
+      messages,
+      text,
+      sendMsg,
+    };
   }
-}
+};
 </script>
