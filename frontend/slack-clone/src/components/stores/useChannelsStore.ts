@@ -5,7 +5,17 @@ export const useChannelsStore = defineStore('channels', {
     state: () => {
         return {
             channelList: [
-                { messageList: [], name: 'General', userlist: [], admin: '', public: true},
+                { messageList: [
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    }
+                ],
+                 name: 'General', 
+                 userlist: [], 
+                 admin: '', 
+                 public: true},
             ] as Channel[],
         }
     },

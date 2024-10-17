@@ -5,6 +5,8 @@
       :text="text"
       :stamp="stamp"
       :sent="name == 'me'"
+      :bg-color="(name == 'me') ? 'purple-10': 'red'"
+      :text-color="'white'"
     />
   </div>
 </template>
