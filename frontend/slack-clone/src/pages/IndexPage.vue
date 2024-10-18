@@ -24,9 +24,9 @@
           <div class="q-pa-md q-mt-xl row">
             <div style="width: 100%; max-width: 1000px">
               <q-scroll-area ref="scrollArea" style="height: 72vh;">
-                <q-infinite-scroll @load="onLoad" reverse>
+                <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
-                    <div class="row justify-center q-my-md">
+                    <div v-if="loading" class="row justify-center q-my-md">
                       <q-spinner color="primary" name="dots" size="40px" />
                     </div>
                   </template>
@@ -93,15 +93,17 @@ export default {
     const fullMessages = ref<Message[]>([]);
     
     const index = ref(0);
-    let limit = 5;
+    let limit = 7;
 
     if (channels.value.length > 0 && channels.value[0].messageList) {
-      fullMessages.value = channels.value[0].messageList; // Full message list
-      messages.value = fullMessages.value.slice(-limit); // Initially show only the last 'limit' messages
+      fullMessages.value = channels.value[0].messageList;
+      messages.value = fullMessages.value.slice(-limit);
     }
 
     const text = ref('');
-    const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);;
+    const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
+    const infiniteScroll = ref(false)
+    const loading = ref(true);
 
     const sendMsg = async () => {
       const date = new Date();
@@ -122,17 +124,34 @@ export default {
       }
     }
 
-    /*const onLoad = (index:number, done: () => void) => {
-
-    }*/
+    const onLoad = (index:number, done: () => void) => {
+      setTimeout(() => {
+          if(limit < fullMessages.value.length - limit){
+            limit += limit
+            messages.value = fullMessages.value.slice(-limit);
+          }
+          else if(limit < fullMessages.value.length){
+            limit = fullMessages.value.length
+            messages.value = fullMessages.value.slice(-limit);
+          }
+          else{
+            infiniteScroll.value = false;
+            loading.value = false;
+          }
+          done()
+        }, 2000)
+    }
 
     return {
       channels,
       messages,
       text,
       scrollArea,
+      infiniteScroll,
+      loading,
       sendMsg,
       scrollToEnd,
+      onLoad,
     };
   }
 };
