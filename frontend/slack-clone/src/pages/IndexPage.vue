@@ -11,7 +11,7 @@
               </q-avatar>
             </q-btn>
           </div>
-          <div v-for="(channel, index) in [...channels]" :key="index">
+          <div v-for="(channel, index) in channels" :key="index">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
               <q-avatar class="channel-icon" text-color="black">
                 oh no
@@ -90,11 +90,14 @@ export default {
     const channels = computed(() => store.channelList);
 
     const messages = ref<Message[]>([]);
+    const fullMessages = ref<Message[]>([]);
     
     const index = ref(0);
+    let limit = 5;
 
     if (channels.value.length > 0 && channels.value[0].messageList) {
-      messages.value = channels.value[0].messageList;
+      fullMessages.value = channels.value[0].messageList; // Full message list
+      messages.value = fullMessages.value.slice(-limit); // Initially show only the last 'limit' messages
     }
 
     const text = ref('');
@@ -106,6 +109,8 @@ export default {
       if (text.value) {
         store.sendMessage('me', [text.value], dateFormat, index.value);
         text.value = '';
+        limit++;
+        messages.value = fullMessages.value.slice(-limit);
         await nextTick();
         scrollToEnd();
       }
@@ -113,9 +118,13 @@ export default {
 
     const scrollToEnd = () => {
       if(scrollArea.value){
-        scrollArea.value.setScrollPosition('vertical', 100000000000);
+        scrollArea.value.setScrollPosition('vertical', 10000);
       }
     }
+
+    /*const onLoad = (index:number, done: () => void) => {
+
+    }*/
 
     return {
       channels,
