@@ -12,7 +12,7 @@
               </q-btn>
             </div>
             <div v-for="(channel, index) in channels" :key="index">
-              <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
+              <q-btn no-caps square unelevated size="0px" padding="0px" color="red" @click="selectChannel(index)">
                 <q-avatar class="channel-icon" text-color="black">
                   {{ getInitials(channel.name) }}
                 </q-avatar>
@@ -113,10 +113,14 @@ export default {
     const index = ref(0);
     let limit = 7;
 
-    if (channels.value.length > 0 && channels.value[0].messageList) {
-      fullMessages.value = channels.value[0].messageList;
-      messages.value = fullMessages.value.slice(-limit);
-    }
+    const loadMessages = () => {
+      if (channels.value.length > 0 && channels.value[index.value].messageList) {
+        fullMessages.value = channels.value[index.value].messageList;
+        messages.value = fullMessages.value.slice(-limit);
+      }
+    };
+
+    loadMessages();
 
     const text = ref('');
     const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
@@ -179,6 +183,12 @@ export default {
       }
     };
 
+    const selectChannel = (channelIndex: number) => {
+      index.value = channelIndex;
+      limit = 7;
+      loadMessages();
+    };
+
     return {
       channels,
       joinableChannels,
@@ -194,7 +204,8 @@ export default {
       openJoinDialog,
       joinChannel,
       joinDialog,
-      selectedChannel
+      selectedChannel,
+      selectChannel
     };
   }
 };
