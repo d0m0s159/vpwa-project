@@ -11,7 +11,7 @@
               </q-avatar>
             </q-btn>
           </div>
-          <div v-for="(channel, index) in channels" :key="index">
+          <div v-for="(channel, index) in [...channels]" :key="index">
             <q-btn no-caps square unelevated size="0px" padding="0px" color="red">
               <q-avatar class="channel-icon" text-color="black">
                 oh no
@@ -23,12 +23,21 @@
         <div class="col q-ml-sm self-end q-mb-sm">
           <div class="q-pa-md q-mt-xl row">
             <div style="width: 100%; max-width: 1000px">
-              <MessageComponent
-              v-for="(message, index) in messages"
-              :key="index"
-              :name="message.name"
-              :text="message.text"
-              :stamp="message.stamp"/>
+              <q-scroll-area ref="scrollArea" style="height: 72vh;">
+                <q-infinite-scroll @load="onLoad" reverse>
+                  <template v-slot:loading>
+                    <div class="row justify-center q-my-md">
+                      <q-spinner color="primary" name="dots" size="40px" />
+                    </div>
+                  </template>
+                  <MessageComponent
+                  v-for="(message, index) in messages"
+                  :key="index"
+                  :name="message.name"
+                  :text="message.text"
+                  :stamp="message.stamp"/>
+                </q-infinite-scroll>
+              </q-scroll-area>
             </div>
           </div>
           <div class="row">
@@ -68,6 +77,8 @@ import { ref, computed } from 'vue';
 import MessageComponent from 'src/components/MessageComponent.vue'; 
 import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 import { Message } from 'src/components/message';
+import { QScrollArea } from 'quasar';
+import { nextTick } from 'vue';
 
 export default {
   components: {
@@ -87,21 +98,32 @@ export default {
     }
 
     const text = ref('');
+    const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);;
 
-    const sendMsg = () => {
+    const sendMsg = async () => {
       const date = new Date();
       const dateFormat = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
       if (text.value) {
         store.sendMessage('me', [text.value], dateFormat, index.value);
         text.value = '';
+        await nextTick();
+        scrollToEnd();
       }
     };
+
+    const scrollToEnd = () => {
+      if(scrollArea.value){
+        scrollArea.value.setScrollPosition('vertical', 100000000000);
+      }
+    }
 
     return {
       channels,
       messages,
       text,
+      scrollArea,
       sendMsg,
+      scrollToEnd,
     };
   }
 };

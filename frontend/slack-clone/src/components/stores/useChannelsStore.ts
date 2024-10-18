@@ -10,7 +10,107 @@ export const useChannelsStore = defineStore('channels', {
                         name: 'Peter',
                         text: ['Ahoj'],
                         stamp: 'dnes',
-                    }
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
+                    {
+                        name: 'Peter',
+                        text: ['Ahoj'],
+                        stamp: 'dnes',
+                    },
                 ],
                  name: 'General', 
                  userlist: [], 
