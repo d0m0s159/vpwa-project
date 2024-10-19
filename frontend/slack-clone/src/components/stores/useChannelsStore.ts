@@ -78,6 +78,7 @@ export const useChannelsStore = defineStore('channels', {
           ] as Channel[],
           notificationsEnabled: true,
           notifyOnlyAddressed: false,
+          channelListSize: 3,
         }
     },
     actions: {

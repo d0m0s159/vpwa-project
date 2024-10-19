@@ -96,6 +96,7 @@ import MessageComponent from 'src/components/MessageComponent.vue';
 import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 import { Message } from 'src/components/message';
 import { QScrollArea, useQuasar } from 'quasar';
+import { Channel } from 'src/components/channel';
 
 export default {
   components: {
@@ -193,17 +194,42 @@ export default {
       loadMessages();
     };
 
-    channels.value.forEach((channel, index) => {
+    channels.value.forEach((channel) => {
       watch(
         () => channel.messageList,
         (newMessageList) => {
-          console.log(index);
-          const newMessage = newMessageList[newMessageList.length - 1];
-          sendNotification(newMessage, channel.name); 
+          if($q.appVisible && store.notificationsEnabled){
+            const newMessage = newMessageList[newMessageList.length - 1];
+            sendNotification(newMessage, channel.name); 
+          }
         },
         { deep: true }
       );
     });
+    const watchNewChannelMessages = (channel:Channel) => {
+      watch(
+        () => channel.messageList,
+        (newMessageList) => {
+          if ($q.appVisible && store.notificationsEnabled) {
+            const newMessage = newMessageList[newMessageList.length - 1];
+            sendNotification(newMessage, channel.name);
+          }
+        },
+        { deep: true }
+      );
+    };
+
+    watch(
+      () => channels.value,
+      (newChannels) => {
+        if(store.channelListSize < channels.value.length){
+          store.channelListSize++;
+          watchNewChannelMessages(newChannels[newChannels.length - 1]);
+        }
+      },
+      { deep: true }
+    );
+
 
     const sendNotification = (message: Message, channelName: string) => {
       if (store.notificationsEnabled) {
@@ -212,7 +238,7 @@ export default {
           color: 'primary',
           position: 'top-right',
           html: false,
-          timeout: 0,
+          timeout: 5000,
           actions: [
           { icon: 'close', color: 'white', round: true, handler: () => { /* ... */ } }
           ]
