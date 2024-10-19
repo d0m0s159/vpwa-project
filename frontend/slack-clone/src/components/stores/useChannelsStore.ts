@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
+import { reactive } from 'vue';
 import type { Channel } from '../channel';
 
 export const useChannelsStore = defineStore('channels', {
     state: () => {
         return {
-            channelList: [
+            channelList: reactive([
                 {
                     messageList: [
                         { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
@@ -54,7 +55,7 @@ export const useChannelsStore = defineStore('channels', {
                     admin: '',
                     public: true
                 },
-            ] as Channel[],
+            ]) as Channel[],
             joinableChannelList: [
               {
                   messageList: [
@@ -75,6 +76,8 @@ export const useChannelsStore = defineStore('channels', {
                   public: true
               },
           ] as Channel[],
+          notificationsEnabled: true,
+          notifyOnlyAddressed: false,
         }
     },
     actions: {
@@ -93,6 +96,6 @@ export const useChannelsStore = defineStore('channels', {
         moveChannelToJoined(index: number) {
           const channel = this.joinableChannelList.splice(index, 1)[0];
           this.channelList.push(channel);
-        },
+        }, 
     }
 });

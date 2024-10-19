@@ -91,17 +91,18 @@
 </style>
 
 <script lang="ts">
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, watch } from 'vue';
 import MessageComponent from 'src/components/MessageComponent.vue';
 import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 import { Message } from 'src/components/message';
-import { QScrollArea } from 'quasar';
+import { QScrollArea, useQuasar } from 'quasar';
 
 export default {
   components: {
     MessageComponent
   },
   setup() {
+    const $q = useQuasar();
     const store = useChannelsStore();
 
     const channels = computed(() => store.channelList);
@@ -112,11 +113,16 @@ export default {
 
     const index = ref(0);
     let limit = 7;
+    const startingLimit = 7;
+    const infiniteScroll = ref(false);
+    const loading = ref(true);
 
     const loadMessages = () => {
       if (channels.value.length > 0 && channels.value[index.value].messageList) {
         fullMessages.value = channels.value[index.value].messageList;
         messages.value = fullMessages.value.slice(-limit);
+        loading.value = true;
+        infiniteScroll.value = false;
       }
     };
 
@@ -124,8 +130,6 @@ export default {
 
     const text = ref('');
     const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
-    const infiniteScroll = ref(false);
-    const loading = ref(true);
     const joinDialog = ref(false);
     const selectedChannel = ref('');
     const selectedChannelIndex = ref<number | null>(null);
@@ -152,7 +156,7 @@ export default {
     const onLoad = (index: number, done: () => void) => {
       setTimeout(() => {
         if (limit < fullMessages.value.length - limit) {
-          limit += limit;
+          limit += startingLimit;
           messages.value = fullMessages.value.slice(-limit);
         } else if (limit < fullMessages.value.length) {
           limit = fullMessages.value.length;
@@ -189,6 +193,33 @@ export default {
       loadMessages();
     };
 
+    channels.value.forEach((channel, index) => {
+      watch(
+        () => channel.messageList,
+        (newMessageList) => {
+          console.log(index);
+          const newMessage = newMessageList[newMessageList.length - 1];
+          sendNotification(newMessage, channel.name); 
+        },
+        { deep: true }
+      );
+    });
+
+    const sendNotification = (message: Message, channelName: string) => {
+      if (store.notificationsEnabled) {
+        $q.notify({
+          message: `New message in ${channelName}\n ${message.name}: ${message.text[0].substring(0, 30)}...`,
+          color: 'primary',
+          position: 'top-right',
+          html: false,
+          timeout: 0,
+          actions: [
+          { icon: 'close', color: 'white', round: true, handler: () => { /* ... */ } }
+          ]
+        })
+      }
+    };
+
     return {
       channels,
       joinableChannels,
@@ -205,7 +236,8 @@ export default {
       joinChannel,
       joinDialog,
       selectedChannel,
-      selectChannel
+      selectChannel,
+      sendNotification
     };
   }
 };
