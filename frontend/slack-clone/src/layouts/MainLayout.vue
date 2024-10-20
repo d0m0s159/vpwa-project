@@ -19,9 +19,9 @@
             class="menu"
             :offset="[10,4]">
             <q-list >
-              <q-item clickable v-close-popup>
-                <q-avatar icon="person"></q-avatar>
-                <q-item-section>Profile</q-item-section>
+              <q-item clickable v-close-popup @click="openStatusDialog">
+                <q-avatar icon="account_circle"></q-avatar>
+                <q-item-section>Set Status</q-item-section>
               </q-item>
               <q-item clickable v-close-popup to="/auth/login">
                 <q-avatar icon="directions" />
@@ -31,13 +31,32 @@
           </q-menu>
 
         </q-btn>
+        <div :class="['status-indicator', store.user.status]"></div>
 
       </q-toolbar>
     </q-header>
-    
+
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <q-dialog v-model="statusDialogOpen" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Set Status</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-btn flat label="Online" color="green" @click="setStatus('online')" />
+          <q-btn flat label="Offline" color="gray" @click="setStatus('offline')" />
+          <q-btn flat label="DND" color="red" @click="setStatus('dnd')" />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
   </q-layout>
 </template>
@@ -60,22 +79,56 @@
     overflow-y: auto;
     background-color: var(--q-color-primary);
   }
+  .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: relative;
+    top: 15px;
+    right: 2px;
+  }
+
+  .status-indicator.online {
+    background-color: green;
+  }
+
+  .status-indicator.offline {
+    background-color: gray;
+  }
+
+  .status-indicator.dnd {
+    background-color: red;
+  }
 </style>
 
 <script lang="ts">
 import { ref } from 'vue'
+import { useCurrentUserStore } from 'src/components/stores/useCurrentUserStore';
 
 export default {
   setup () {
     const leftDrawerOpen = ref(true);
     const rightDrawerOpen = ref(true);
 
+    const statusDialogOpen = ref(false);
+    const store = useCurrentUserStore();
+
+    const openStatusDialog = () => {
+      statusDialogOpen.value = true;
+    };
+
+    const setStatus = (status: string) => {
+      store.setUserStatus(status);
+      statusDialogOpen.value = false;
+    };
+
     return {
       leftDrawerOpen,
       rightDrawerOpen,
-      /*toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },*/
+      statusDialogOpen,
+      openStatusDialog,
+      setStatus,
+      store
     }
   }
 }
