@@ -1,11 +1,11 @@
 <template>
   <q-page>
     <div class="example-row-all-breakpoints">
-      <div class="row justify-between">
+      <div class="row justify-between main-page">
         <div class="col-auto">
           <div class="channel-list">
             <div v-for="(channel, index) in joinableChannels" :key="index">
-              <q-btn no-caps square unelevated size="0px" padding="0px" color="teal" @click="openJoinDialog(channel.name, index)">
+              <q-btn no-caps square unelevated size="0px" padding="0px" color="amber-7" @click="openJoinDialog(channel.name, index)">
                 <q-avatar class="channel-icon" text-color="black">
                   {{ getInitials(channel.name) }}
                 </q-avatar>
@@ -20,10 +20,11 @@
             </div>
           </div>
         </div>
-        <div class="col q-ml-sm self-end">
-          <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col q-ml-sm self-end q-mb-sm">
+          <div class="q-pa-md q-mt-sm row">
             <div style="width: 100%; max-width: 1000px">
-              <q-scroll-area ref="scrollArea" style="height: 72vh;">
+              <q-scroll-area ref="scrollArea" style="height: 76vh">
                 <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
                     <div v-if="loading" class="row justify-center q-my-sm">
@@ -42,13 +43,14 @@
             </div>
           </div>
           <div class="row">
-            <q-input class="col input-message" outlined rounded v-model="text" label="Message">
+            <q-input class="col input-message" outlined rounded v-model="text" bg-color="white" label="Message">
               <template v-slot:after>
                 <q-btn round dense flat icon="send" @click="sendMsg" />
               </template>
             </q-input>
           </div>
         </div>
+        <div class="col-md-1"></div>
       </div>
     </div>
 
@@ -68,14 +70,31 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="userListDialog" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Users in {{ channels[index].name }}</div>
+        </q-card-section>
+
+        <q-card-section>
+          <div v-for="user in channels[index]?.userlist" :key="user.name">
+            {{ user.name }}
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Close" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   h1 {
     margin-top: 0px
   }
-
   .input-message {
     width: 100%;
     max-width: 1050px;
@@ -84,9 +103,16 @@
     margin: 6px;
     background-color: white;
   }
+  .channel-icon .joinable {
+    background-color: teal;
+  }
   .channel-list {
     height: calc(100vh - 50px);
-    overflow-y: auto
+    overflow-y: auto;
+    background-color: $red;
+  }
+  .main-page {
+    background-color: $red-3;
   }
 </style>
 
@@ -114,9 +140,14 @@ export default {
 
     const index = ref(0);
     let limit = 7;
-    const startingLimit = 7;
+
+    const text = ref('');
+    const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
     const infiniteScroll = ref(false);
     const loading = ref(true);
+    const joinDialog = ref(false);
+    const userListDialog = ref(false);
+    const selectedChannel = ref('');
 
     const loadMessages = () => {
       if (channels.value.length > 0 && channels.value[index.value].messageList) {
@@ -129,23 +160,42 @@ export default {
 
     loadMessages();
 
-    const text = ref('');
-    const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
-    const joinDialog = ref(false);
-    const selectedChannel = ref('');
-    const selectedChannelIndex = ref<number | null>(null);
-
     const sendMsg = async () => {
       const date = new Date();
       const dateFormat = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
-      if (text.value) {
-        store.sendMessage('me', [text.value], dateFormat, index.value);
-        text.value = '';
+      const messageText = text.value.trim();
+
+      if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
+        const command = messageText.split(' ')[0];
+        const channelName = messageText.slice(command.length).trim();
+        let channelIndex = joinableChannels.value.findIndex(channel => channel.name === channelName);
+        if (channelIndex === -1) {
+          // Channel not found, create it
+          store.createChannel(channelName);
+          channelIndex = joinableChannels.value.length - 1; // New channel will be at the end of the joinableChannels list
+        }
+        index.value = channelIndex;
+      } else if (messageText.startsWith('/cancel')) {
+        if (index.value >= 0) {
+          store.channelList.splice(index.value, 1);
+          console.log(`Deleted channel: ${selectedChannel.value}`);
+          selectedChannel.value = '';
+          index.value = -1;
+          messages.value = [];
+        }
+      } else if (messageText.startsWith('/list')) {
+        if (index.value >= 0) {
+          userListDialog.value = true;
+        }
+      } else if (messageText) {
+        store.sendMessage('me', [messageText], dateFormat, index.value);
         limit++;
         messages.value = fullMessages.value.slice(-limit);
         await nextTick();
         scrollToEnd();
       }
+
+      text.value = '';
     };
 
     const scrollToEnd = () => {
@@ -157,13 +207,13 @@ export default {
     const onLoad = (index: number, done: () => void) => {
       setTimeout(() => {
         if (limit < fullMessages.value.length - limit) {
-          limit += startingLimit;
+          limit += limit;
           messages.value = fullMessages.value.slice(-limit);
         } else if (limit < fullMessages.value.length) {
           limit = fullMessages.value.length;
           messages.value = fullMessages.value.slice(-limit);
         } else {
-          infiniteScroll.value = false;
+          infiniteScroll.value = true;
           loading.value = false;
         }
         done();
@@ -176,20 +226,23 @@ export default {
 
     const openJoinDialog = (channelName: string, channelIndex: number) => {
       selectedChannel.value = channelName;
-      selectedChannelIndex.value = channelIndex;
+      index.value = channelIndex;
       joinDialog.value = true;
     };
 
     const joinChannel = () => {
-      if (selectedChannelIndex.value !== null) {
-        store.moveChannelToJoined(selectedChannelIndex.value);
+      if (index.value >= 0) {
+        store.moveChannelToJoined(index.value);
         console.log(`Joined channel: ${selectedChannel.value}`);
         joinDialog.value = false;
       }
     };
 
     const selectChannel = (channelIndex: number) => {
+      console.log(`Selected channel index before: ${index.value}`)
       index.value = channelIndex;
+      store.setSelectedChannelIndex(channelIndex);
+      console.log(`Selected channel index after: ${index.value}`);
       limit = 7;
       loadMessages();
     };
@@ -200,7 +253,7 @@ export default {
         (newMessageList) => {
           if($q.appVisible && store.notificationsEnabled){
             const newMessage = newMessageList[newMessageList.length - 1];
-            sendNotification(newMessage, channel.name); 
+            sendNotification(newMessage, channel.name);
           }
         },
         { deep: true }
@@ -261,9 +314,10 @@ export default {
       openJoinDialog,
       joinChannel,
       joinDialog,
+      userListDialog,
       selectedChannel,
       selectChannel,
-      sendNotification
+      index
     };
   }
 };

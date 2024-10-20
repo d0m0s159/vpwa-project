@@ -8,30 +8,31 @@ export const useChannelsStore = defineStore('channels', {
             channelList: reactive([
                 {
                     messageList: [
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
-                        { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
+                      { name: 'Peter', text: ['Ahoj'], stamp: 'today' },
                     ],
                     name: 'General',
-                    userlist: [],
+                    userlist: [{name: 'Peter'}],
                     admin: '',
                     public: true
                 },
@@ -79,6 +80,7 @@ export const useChannelsStore = defineStore('channels', {
           notificationsEnabled: true,
           notifyOnlyAddressed: false,
           channelListSize: 3,
+          selectedChannelIndex: 0,
         }
     },
     actions: {
@@ -97,6 +99,17 @@ export const useChannelsStore = defineStore('channels', {
         moveChannelToJoined(index: number) {
           const channel = this.joinableChannelList.splice(index, 1)[0];
           this.channelList.push(channel);
-        }, 
+        },
+        setSelectedChannelIndex(index: number) {
+          this.selectedChannelIndex = index;
+        },
+    },
+    getters: {
+      selectedChannelName: (state) => {
+        if (state.selectedChannelIndex >= 0 && state.selectedChannelIndex < state.channelList.length) {
+          return state.channelList[state.selectedChannelIndex].name;
+        }
+        return '';
+      }
     }
 });
