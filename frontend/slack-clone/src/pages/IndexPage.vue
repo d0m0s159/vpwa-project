@@ -112,17 +112,19 @@
 </style>
 
 <script lang="ts">
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, watch } from 'vue';
 import MessageComponent from 'src/components/MessageComponent.vue';
 import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 import { Message } from 'src/components/message';
-import { QScrollArea } from 'quasar';
+import { QScrollArea, useQuasar } from 'quasar';
+import { Channel } from 'src/components/channel';
 
 export default {
   components: {
     MessageComponent
   },
   setup() {
+    const $q = useQuasar();
     const store = useChannelsStore();
 
     const channels = computed(() => store.channelList);
@@ -236,6 +238,58 @@ export default {
       console.log(`Selected channel index after: ${index.value}`);
       limit = 7;
       loadMessages();
+    };
+
+    channels.value.forEach((channel) => {
+      watch(
+        () => channel.messageList,
+        (newMessageList) => {
+          if($q.appVisible && store.notificationsEnabled){
+            const newMessage = newMessageList[newMessageList.length - 1];
+            sendNotification(newMessage, channel.name);
+          }
+        },
+        { deep: true }
+      );
+    });
+    const watchNewChannelMessages = (channel:Channel) => {
+      watch(
+        () => channel.messageList,
+        (newMessageList) => {
+          if ($q.appVisible && store.notificationsEnabled) {
+            const newMessage = newMessageList[newMessageList.length - 1];
+            sendNotification(newMessage, channel.name);
+          }
+        },
+        { deep: true }
+      );
+    };
+
+    watch(
+      () => channels.value,
+      (newChannels) => {
+        if(store.channelListSize < channels.value.length){
+          store.channelListSize++;
+          watchNewChannelMessages(newChannels[newChannels.length - 1]);
+        }
+      },
+      { deep: true }
+    );
+
+
+    const sendNotification = (message: Message, channelName: string) => {
+      if (store.notificationsEnabled) {
+        $q.notify({
+          message: `New message in ${channelName}\n ${message.name}: ${message.text[0].substring(0, 30)}...`,
+          color: 'primary',
+          position: 'top-right',
+          html: false,
+          timeout: 5000,
+          actions: [
+          { icon: 'close', color: 'white', round: true, handler: () => { /* ... */ } }
+          ]
+        })
+      }
     };
 
     return {
