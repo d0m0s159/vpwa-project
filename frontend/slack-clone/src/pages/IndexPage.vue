@@ -68,6 +68,24 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="userListDialog" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Users in {{ channels[index].name }}</div>
+        </q-card-section>
+
+        <q-card-section>
+          <div v-for="user in channels[index]?.userlist" :key="user.name">
+            {{ user.name }}
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Close" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -91,19 +109,17 @@
 </style>
 
 <script lang="ts">
-import { ref, computed, nextTick, watch } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import MessageComponent from 'src/components/MessageComponent.vue';
 import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 import { Message } from 'src/components/message';
-import { QScrollArea, useQuasar } from 'quasar';
-import { Channel } from 'src/components/channel';
+import { QScrollArea } from 'quasar';
 
 export default {
   components: {
     MessageComponent
   },
   setup() {
-    const $q = useQuasar();
     const store = useChannelsStore();
 
     const channels = computed(() => store.channelList);
@@ -114,16 +130,11 @@ export default {
 
     const index = ref(0);
     let limit = 7;
-    const startingLimit = 7;
-    const infiniteScroll = ref(false);
-    const loading = ref(true);
 
     const loadMessages = () => {
       if (channels.value.length > 0 && channels.value[index.value].messageList) {
         fullMessages.value = channels.value[index.value].messageList;
         messages.value = fullMessages.value.slice(-limit);
-        loading.value = true;
-        infiniteScroll.value = false;
       }
     };
 
@@ -131,21 +142,48 @@ export default {
 
     const text = ref('');
     const scrollArea = ref<InstanceType<typeof QScrollArea> | null>(null);
+    const infiniteScroll = ref(false);
+    const loading = ref(true);
     const joinDialog = ref(false);
+    const userListDialog = ref(false);
     const selectedChannel = ref('');
-    const selectedChannelIndex = ref<number | null>(null);
 
     const sendMsg = async () => {
       const date = new Date();
       const dateFormat = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
-      if (text.value) {
-        store.sendMessage('me', [text.value], dateFormat, index.value);
-        text.value = '';
+      const messageText = text.value.trim();
+
+      if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
+        const command = messageText.split(' ')[0];
+        const channelName = messageText.slice(command.length).trim();
+        let channelIndex = joinableChannels.value.findIndex(channel => channel.name === channelName);
+        if (channelIndex === -1) {
+          // Channel not found, create it
+          store.createChannel(channelName);
+          channelIndex = joinableChannels.value.length - 1; // New channel will be at the end of the joinableChannels list
+        }
+        index.value = channelIndex;
+      } else if (messageText.startsWith('/cancel')) {
+        if (index.value >= 0) {
+          store.channelList.splice(index.value, 1);
+          console.log(`Deleted channel: ${selectedChannel.value}`);
+          selectedChannel.value = '';
+          index.value = -1;
+          messages.value = [];
+        }
+      } else if (messageText.startsWith('/list')) {
+        if (index.value >= 0) {
+          userListDialog.value = true;
+        }
+      } else if (messageText) {
+        store.sendMessage('me', [messageText], dateFormat, index.value);
         limit++;
         messages.value = fullMessages.value.slice(-limit);
         await nextTick();
         scrollToEnd();
       }
+
+      text.value = '';
     };
 
     const scrollToEnd = () => {
@@ -157,7 +195,7 @@ export default {
     const onLoad = (index: number, done: () => void) => {
       setTimeout(() => {
         if (limit < fullMessages.value.length - limit) {
-          limit += startingLimit;
+          limit += limit;
           messages.value = fullMessages.value.slice(-limit);
         } else if (limit < fullMessages.value.length) {
           limit = fullMessages.value.length;
@@ -176,74 +214,24 @@ export default {
 
     const openJoinDialog = (channelName: string, channelIndex: number) => {
       selectedChannel.value = channelName;
-      selectedChannelIndex.value = channelIndex;
+      index.value = channelIndex;
       joinDialog.value = true;
     };
 
     const joinChannel = () => {
-      if (selectedChannelIndex.value !== null) {
-        store.moveChannelToJoined(selectedChannelIndex.value);
+      if (index.value >= 0) {
+        store.moveChannelToJoined(index.value);
         console.log(`Joined channel: ${selectedChannel.value}`);
         joinDialog.value = false;
       }
     };
 
     const selectChannel = (channelIndex: number) => {
+      console.log(`Selected channel index before: ${index.value}`)
       index.value = channelIndex;
+      console.log(`Selected channel index after: ${index.value}`);
       limit = 7;
       loadMessages();
-    };
-
-    channels.value.forEach((channel) => {
-      watch(
-        () => channel.messageList,
-        (newMessageList) => {
-          if($q.appVisible && store.notificationsEnabled){
-            const newMessage = newMessageList[newMessageList.length - 1];
-            sendNotification(newMessage, channel.name); 
-          }
-        },
-        { deep: true }
-      );
-    });
-    const watchNewChannelMessages = (channel:Channel) => {
-      watch(
-        () => channel.messageList,
-        (newMessageList) => {
-          if ($q.appVisible && store.notificationsEnabled) {
-            const newMessage = newMessageList[newMessageList.length - 1];
-            sendNotification(newMessage, channel.name);
-          }
-        },
-        { deep: true }
-      );
-    };
-
-    watch(
-      () => channels.value,
-      (newChannels) => {
-        if(store.channelListSize < channels.value.length){
-          store.channelListSize++;
-          watchNewChannelMessages(newChannels[newChannels.length - 1]);
-        }
-      },
-      { deep: true }
-    );
-
-
-    const sendNotification = (message: Message, channelName: string) => {
-      if (store.notificationsEnabled) {
-        $q.notify({
-          message: `New message in ${channelName}\n ${message.name}: ${message.text[0].substring(0, 30)}...`,
-          color: 'primary',
-          position: 'top-right',
-          html: false,
-          timeout: 5000,
-          actions: [
-          { icon: 'close', color: 'white', round: true, handler: () => { /* ... */ } }
-          ]
-        })
-      }
     };
 
     return {
@@ -261,9 +249,10 @@ export default {
       openJoinDialog,
       joinChannel,
       joinDialog,
+      userListDialog,
       selectedChannel,
       selectChannel,
-      sendNotification
+      index
     };
   }
 };

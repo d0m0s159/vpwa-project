@@ -31,7 +31,7 @@ export const useChannelsStore = defineStore('channels', {
                         { name: 'Peter', text: ['Ahoj'], stamp: 'dnes' },
                     ],
                     name: 'General',
-                    userlist: [],
+                    userlist: [{name: 'Peter'}],
                     admin: '',
                     public: true
                 },
@@ -97,6 +97,6 @@ export const useChannelsStore = defineStore('channels', {
         moveChannelToJoined(index: number) {
           const channel = this.joinableChannelList.splice(index, 1)[0];
           this.channelList.push(channel);
-        }, 
+        },
     }
 });
