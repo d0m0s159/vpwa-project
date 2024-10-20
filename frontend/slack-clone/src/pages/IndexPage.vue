@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <div class="example-row-all-breakpoints">
-      <div class="row justify-between">
+      <div class="row justify-between main-page">
         <div class="col-auto">
           <div class="channel-list">
             <div v-for="(channel, index) in joinableChannels" :key="index">
@@ -20,10 +20,11 @@
             </div>
           </div>
         </div>
+        <div class="col-md-1"></div>
         <div class="col q-ml-sm self-end q-mb-sm">
           <div class="q-pa-md q-mt-sm row">
             <div style="width: 100%; max-width: 1000px">
-              <q-scroll-area ref="scrollArea" style="height: 72vh;">
+              <q-scroll-area ref="scrollArea" style="height: 76vh">
                 <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
                     <div v-if="loading" class="row justify-center q-my-md">
@@ -42,13 +43,14 @@
             </div>
           </div>
           <div class="row">
-            <q-input class="col input-message" outlined rounded v-model="text" label="Message">
+            <q-input class="col input-message" outlined rounded v-model="text" bg-color="white" label="Message">
               <template v-slot:after>
                 <q-btn round dense flat icon="send" @click="sendMsg" />
               </template>
             </q-input>
           </div>
         </div>
+        <div class="col-md-1"></div>
       </div>
     </div>
 
@@ -108,6 +110,9 @@
     height: calc(100vh - 50px);
     overflow-y: auto;
     background-color: $red;
+  }
+  .main-page {
+    background-color: $red-3;
   }
 </style>
 
