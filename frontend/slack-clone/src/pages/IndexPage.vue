@@ -162,7 +162,7 @@ export default {
 
     const sendMsg = async () => {
       const date = new Date();
-      const dateFormat = `${date.getDay()}/${date.getMonth()}/${date.getFullYear()}`;
+      const dateFormat = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
       const messageText = text.value.trim();
 
       if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
