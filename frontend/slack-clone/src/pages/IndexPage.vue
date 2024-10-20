@@ -23,7 +23,7 @@
         <div class="col-md-1"></div>
         <div class="col q-ml-sm self-end q-mb-sm">
           <div class="q-pa-md q-mt-sm row">
-            <div style="width: 100%; max-width: 1000px">
+            <div style="width: 1000px; max-width: 1000px">
               <q-scroll-area ref="scrollArea" style="height: 76vh">
                 <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
@@ -162,7 +162,7 @@ export default {
 
     const sendMsg = async () => {
       const date = new Date();
-      const dateFormat = `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+      const dateFormat = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
       const messageText = text.value.trim();
 
       if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
