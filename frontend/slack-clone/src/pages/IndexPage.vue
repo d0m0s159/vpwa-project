@@ -20,13 +20,13 @@
             </div>
           </div>
         </div>
-        <div class="col q-ml-sm self-end q-mb-sm">
-          <div class="q-pa-md q-mt-sm row">
+        <div class="col q-ml-sm self-end">
+          <div class="row">
             <div style="width: 100%; max-width: 1000px">
               <q-scroll-area ref="scrollArea" style="height: 72vh;">
                 <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
-                    <div v-if="loading" class="row justify-center q-my-md">
+                    <div v-if="loading" class="row justify-center q-my-sm">
                       <q-spinner color="primary" name="dots" size="40px" />
                     </div>
                   </template>
