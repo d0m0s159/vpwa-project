@@ -9,11 +9,10 @@
 
         <q-btn
           round
-          color="white">
+          unelevated
+          >
 
-          <q-avatar size="28px">
-            <img src="https://cdn.quasar.dev/logo-v2/svg/logo.svg">
-          </q-avatar>
+          <q-avatar size="40px" icon="account_circle"/>
 
           <q-menu
             class="menu"
@@ -85,7 +84,7 @@
     border-radius: 50%;
     position: relative;
     top: 15px;
-    right: 2px;
+    right: 7px;
   }
 
   .status-indicator.online {
