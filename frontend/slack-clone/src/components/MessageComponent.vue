@@ -7,6 +7,7 @@
       :sent="name == 'me'"
       :bg-color="(name == 'me') ? 'purple-10': 'red'"
       :text-color="'white'"
+      class="custom-chat-message"
     />
   </div>
 </template>
@@ -16,3 +17,9 @@
 
   defineProps<Message>()
 </script>
+
+<style scoped>
+.custom-chat-message {
+  margin-left: 20px;
+}
+</style>

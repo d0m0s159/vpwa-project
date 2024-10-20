@@ -21,10 +21,10 @@
           </div>
         </div>
         <div class="col-md-1"></div>
-        <div class="col q-ml-sm self-end q-mb-sm">
-          <div class="q-pa-md q-mt-sm row">
+        <div class="col self-end q-mb-sm">
+          <div class="row">
             <div style="width: 1000px; max-width: 1000px">
-              <q-scroll-area ref="scrollArea" style="height: 76vh">
+              <q-scroll-area ref="scrollArea" style="height: 76vh;">
                 <q-infinite-scroll @load="onLoad" reverse :disable="infiniteScroll">
                   <template v-slot:loading>
                     <div v-if="loading" class="row justify-center q-my-sm">
