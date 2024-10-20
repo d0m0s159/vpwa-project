@@ -3,9 +3,19 @@
     <q-header elevated class="bg-secondary text-white">
       <q-toolbar>
 
-        <q-toolbar-title>
+        <q-toolbar-title shrink>
           Slack
         </q-toolbar-title>
+
+        <div class="q-toolbar-spacer"></div>
+
+
+        <h6 class="selected-channel-name">
+          {{ selectedChannelName }}
+        </h6>
+
+
+        <div class="q-toolbar-spacer"></div>
 
         <q-btn
           round
@@ -30,7 +40,7 @@
           </q-menu>
 
         </q-btn>
-        <div :class="['status-indicator', store.user.status]"></div>
+        <div :class="['status-indicator', userStore.user.status]"></div>
 
       </q-toolbar>
     </q-header>
@@ -98,11 +108,21 @@
   .status-indicator.dnd {
     background-color: red;
   }
+
+  .q-toolbar-spacer {
+    flex: 1;
+  }
+
+  .selected-channel-name {
+    margin: 0;
+    text-align: center;
+  }
 </style>
 
 <script lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useCurrentUserStore } from 'src/components/stores/useCurrentUserStore';
+import { useChannelsStore } from 'src/components/stores/useChannelsStore';
 
 export default {
   setup () {
@@ -110,16 +130,19 @@ export default {
     const rightDrawerOpen = ref(true);
 
     const statusDialogOpen = ref(false);
-    const store = useCurrentUserStore();
+    const userStore = useCurrentUserStore();
+    const channelStore = useChannelsStore();
 
     const openStatusDialog = () => {
       statusDialogOpen.value = true;
     };
 
     const setStatus = (status: string) => {
-      store.setUserStatus(status);
+      userStore.setUserStatus(status);
       statusDialogOpen.value = false;
     };
+
+    const selectedChannelName = computed(() => channelStore.selectedChannelName);
 
     return {
       leftDrawerOpen,
@@ -127,7 +150,9 @@ export default {
       statusDialogOpen,
       openStatusDialog,
       setStatus,
-      store
+      userStore,
+      channelStore,
+      selectedChannelName
     }
   }
 }

@@ -5,7 +5,7 @@
         <div class="col-auto">
           <div class="channel-list">
             <div v-for="(channel, index) in joinableChannels" :key="index">
-              <q-btn no-caps square unelevated size="0px" padding="0px" color="teal" @click="openJoinDialog(channel.name, index)">
+              <q-btn no-caps square unelevated size="0px" padding="0px" color="amber-7" @click="openJoinDialog(channel.name, index)">
                 <q-avatar class="channel-icon" text-color="black">
                   {{ getInitials(channel.name) }}
                 </q-avatar>
@@ -89,11 +89,10 @@
   </q-page>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
   h1 {
     margin-top: 0px
   }
-
   .input-message {
     width: 100%;
     max-width: 1050px;
@@ -102,9 +101,13 @@
     margin: 6px;
     background-color: white;
   }
+  .channel-icon .joinable {
+    background-color: teal;
+  }
   .channel-list {
     height: calc(100vh - 50px);
-    overflow-y: auto
+    overflow-y: auto;
+    background-color: $red;
   }
 </style>
 
@@ -229,6 +232,7 @@ export default {
     const selectChannel = (channelIndex: number) => {
       console.log(`Selected channel index before: ${index.value}`)
       index.value = channelIndex;
+      store.setSelectedChannelIndex(channelIndex);
       console.log(`Selected channel index after: ${index.value}`);
       limit = 7;
       loadMessages();

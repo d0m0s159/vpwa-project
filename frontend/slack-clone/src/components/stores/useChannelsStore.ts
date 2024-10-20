@@ -80,6 +80,7 @@ export const useChannelsStore = defineStore('channels', {
           notificationsEnabled: true,
           notifyOnlyAddressed: false,
           channelListSize: 3,
+          selectedChannelIndex: 0,
         }
     },
     actions: {
@@ -99,5 +100,16 @@ export const useChannelsStore = defineStore('channels', {
           const channel = this.joinableChannelList.splice(index, 1)[0];
           this.channelList.push(channel);
         },
+        setSelectedChannelIndex(index: number) {
+          this.selectedChannelIndex = index;
+        },
+    },
+    getters: {
+      selectedChannelName: (state) => {
+        if (state.selectedChannelIndex >= 0 && state.selectedChannelIndex < state.channelList.length) {
+          return state.channelList[state.selectedChannelIndex].name;
+        }
+        return '';
+      }
     }
 });
