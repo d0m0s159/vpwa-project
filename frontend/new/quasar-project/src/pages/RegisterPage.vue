@@ -5,15 +5,21 @@
       <q-separator />
       <q-form @submit="onSubmit" class="text-center q-mb-sm" ref="registerForm">
         <q-input
+          name="email"
+          id="email"
           v-model="email"
           outlined
           hint="E-mail"
           type="email"
           class="q-mb-sm"
+          label="Email"
+          autofocus
           :rules="[val => !!val || 'E-mail is required', val => /.+@.+\..+/.test(val) || 'E-mail must be valid']"
         />
 
         <q-input
+          id="nickname"
+          name="nickname"
           v-model="nickname"
           outlined
           hint="Nickname"
@@ -23,6 +29,8 @@
         />
 
         <q-input
+          id="firstname"
+          name="firstname"
           v-model="firstname"
           outlined
           hint="First Name"
@@ -32,6 +40,8 @@
         />
 
         <q-input
+          id="surname"
+          name="surname"
           v-model="surname"
           outlined
           hint="Surname"
@@ -41,6 +51,9 @@
         />
 
         <q-input
+          id="password"
+          name="password"
+          label="Password"
           v-model="password"
           outlined
           :type="isPwd ? 'password' : 'text'"
@@ -65,6 +78,9 @@
         </q-input>
 
         <q-input
+          id="password_confirmation"
+          name="password_confirmation"
+          label="Confirm Password"
           v-model="passwordRepeat"
           outlined
           hint="Repeat password"
