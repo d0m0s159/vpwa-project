@@ -1,7 +1,10 @@
-import db from '@adonisjs/lucid/services/db'
 import vine from '@vinejs/vine'
 
 const password = vine.string().minLength(8)
+const nickname = vine.string().maxLength(50)
+const firstname = vine.string().maxLength(50)
+const surname = vine.string().minLength(8)
+const passwordConfirmation = vine.string().minLength(8)
 
 export const registerValidator = vine.compile(
     vine.object({
@@ -10,7 +13,11 @@ export const registerValidator = vine.compile(
 
             return !match
         }),
-        password
+        nickname,
+        firstname,
+        surname,
+        password,
+        passwordConfirmation
     })
 )
 

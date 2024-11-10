@@ -172,6 +172,7 @@ export default defineComponent({
         const isValid = await registerForm.value.validate()
         if (isValid) {
           try {
+            console.log(2)
             await authStore.register(form)
             router.push(redirectTo.value)
           } catch (error) {

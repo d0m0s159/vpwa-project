@@ -7,3 +7,5 @@ app.ready(() => {
     console.log(socket.id)
   })
 })
+
+auth: () => import('#middleware/auth_middleware')

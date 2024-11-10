@@ -16,8 +16,9 @@ router.get('/', async () => {
     hello: 'world',
   }
 })
-
-router.post('/auth/register', [AuthController, 'register']).as('auth.register')
-router.post('/auth/login', [AuthController, 'login']).as('auth.login')
-router.post('/auth/logout', [AuthController, 'logout']).as('auth.logout').use(middleware.auth())
-router.get('/auth/me', [AuthController, 'me']).as('auth.me')
+router.group(() => {
+  router.post('/auth/register', [AuthController, 'register']).as('auth.register')
+  router.post('/auth/login', [AuthController, 'login']).as('auth.login')
+  router.post('/auth/logout', [AuthController, 'logout']).as('auth.logout').use(middleware.auth())
+  router.get('/auth/me', [AuthController, 'me']).as('auth.me')
+}).prefix('auth')
