@@ -9,12 +9,14 @@ export interface RegisterData {
 email: string
 password: string
 passwordConfirmation: string
+nickname: string
+firstname: string
+surname: string
 }
 
 export interface LoginCredentials {
 email: string
 password: string
-remember: boolean
 }
 
 export interface User {

@@ -4,21 +4,22 @@
     <q-card class="q-pa-lg">
       <q-form class="text-center q-mb-sm" @submit="onSubmit" ref="loginForm">
         <q-input
-        class="q-my-md"
-        outlined
-        v-model="name"
-        type="text"
-        name="nickname"
-        hint="Nickname"
-        :rules="[val => !!val || 'Nickname required']"
+          name="email"
+          id="email"
+          v-model.trim="credentials.email"
+          type="email"
+          label="Email"
+          :rules="[val => !!val || 'Email required']"
+          autofocus
         />
         <q-input
-          class="q-my-md"
-          v-model="password"
-          outlined
-          :type="isPwd ? 'password' : 'text'"
-          hint="Password"
+          id="password"
+          name="password"
+          v-model="credentials.password"
+          label="Password"
+          :type="isPwd ? 'text' : 'password'"
           :rules="[val => !!val || 'Password required']"
+          bottom-slots
         >
           <template v-slot:append>
             <q-icon
@@ -38,7 +39,6 @@
             label="Login"
             class="q-mb-sm q-px-lg"
             no-caps
-            @click="validate"
           />
       </q-form>
 
@@ -57,43 +57,64 @@
   </q-page>
   </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from 'stores/useAuthStore'
+
+export default defineComponent({
   name: 'LoginPage',
-  data () {
-    return {
-      name: '',
-      password: '',
-      isPwd: true
+  setup () {
+    const authStore = useAuthStore()
+
+    const credentials = ref({
+      email: '',
+      password: ''
+    })
+
+    const router = useRouter()
+    const isPwd = ref(false)
+
+    const loading = ref(false)
+
+    const onSubmit = async () => {
+      loading.value = true
+      try {
+        await authStore.login(credentials.value)
+        const redirectTo = { name: 'home' }
+        router.push(redirectTo)
+      } catch (error) {
+        console.error('Login failed', error)
+      } finally {
+        loading.value = false
+      }
     }
-  },
-  methods: {
-    validate () {
-      this.$refs.loginForm.validate().then((isValid) => {
-        if (isValid) {
-          this.$router.push('/')
-        }
-      })
+
+    return {
+      credentials,
+      isPwd,
+      loading,
+      onSubmit
     }
   }
-}
+})
 </script>
 
-  <style>
-  .q-card {
-    width: 360px;
-  }
+<style>
+.q-card {
+  width: 360px;
+}
 
+h2 {
+  color: #ffffff
+}
+
+@media (max-width: 600px) {
   h2 {
-    color: #ffffff
+    font-size: 2.25rem;
   }
-
-  @media (max-width: 600px) {
-    h2 {
-      font-size: 2.25rem;
-    }
-    .q-card {
-        width: 80vw;
-    }
+  .q-card {
+      width: 80vw;
   }
-  </style>
+}
+</style>

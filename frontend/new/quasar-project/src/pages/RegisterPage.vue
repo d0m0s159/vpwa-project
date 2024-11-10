@@ -3,11 +3,11 @@
     <h2>Create an account</h2>
     <q-card class="q-pa-lg">
       <q-separator />
-      <q-form @submit="onSubmit" class="text-center q-mb-sm" ref="registerForm">
+      <q-form @submit.prevent="onSubmit" class="text-center q-mb-sm" ref="registerForm">
         <q-input
           name="email"
           id="email"
-          v-model="email"
+          v-model="form.email"
           outlined
           hint="E-mail"
           type="email"
@@ -20,7 +20,7 @@
         <q-input
           id="nickname"
           name="nickname"
-          v-model="nickname"
+          v-model="form.nickname"
           outlined
           hint="Nickname"
           type="text"
@@ -31,7 +31,7 @@
         <q-input
           id="firstname"
           name="firstname"
-          v-model="firstname"
+          v-model="form.firstname"
           outlined
           hint="First Name"
           type="text"
@@ -42,7 +42,7 @@
         <q-input
           id="surname"
           name="surname"
-          v-model="surname"
+          v-model="form.surname"
           outlined
           hint="Surname"
           type="text"
@@ -54,9 +54,9 @@
           id="password"
           name="password"
           label="Password"
-          v-model="password"
+          v-model="form.password"
           outlined
-          :type="isPwd ? 'password' : 'text'"
+          :type="showPassword ? 'text' : 'password'"
           hint="Password"
           class="q-mb-sm"
           :rules="[
@@ -65,14 +65,13 @@
             val => /[A-Z]/.test(val) || 'Password must contain at least one uppercase letter',
             val => /[a-z]/.test(val) || 'Password must contain at least one lowercase letter',
             val => /[0-9]/.test(val) || 'Password must contain at least one number',
-            val => /[!@#$%^&*]/.test(val) || 'Password must contain at least one special character'
           ]"
         >
           <template v-slot:append>
             <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
+              :name="showPassword ? 'visibility_off' : 'visibility'"
               class="cursor-pointer"
-              @click="isPwd = !isPwd"
+              @click="togglePasswordVisibility"
             />
           </template>
         </q-input>
@@ -81,14 +80,14 @@
           id="password_confirmation"
           name="password_confirmation"
           label="Confirm Password"
-          v-model="passwordRepeat"
+          v-model="form.passwordConfirmation"
           outlined
           hint="Repeat password"
           type="password"
           class="q-mb-lg"
           :rules="[
             val => !!val || 'Repeat the password you typed in the previous field',
-            val => val === password || 'Field must equal the first password typed in'
+            val => val === form.password || 'Field must match the first password'
           ]"
         />
 
@@ -102,7 +101,6 @@
             label="Register"
             class="q-mb-sm q-px-lg"
             no-caps
-            @click="validate"
           />
         </div>
       </q-form>
@@ -119,29 +117,81 @@
   </q-page>
 </template>
 
-<script>
-export default {
-  data () {
-    return {
+<script lang="ts">
+import { defineComponent, reactive, ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from 'src/stores/useAuthStore'
+import { QForm } from 'quasar'
+
+interface FormFields {
+  email: string
+  nickname: string
+  firstname: string
+  surname: string
+  password: string
+  passwordConfirmation: string
+}
+
+export default defineComponent({
+  name: 'RegisterPage',
+  setup () {
+    const router = useRouter()
+    const authStore = useAuthStore()
+
+    // Reactive form data with explicit typing
+    const form = reactive<FormFields>({
       email: '',
       nickname: '',
       firstname: '',
       surname: '',
       password: '',
-      passwordRepeat: '',
-      isPwd: true
+      passwordConfirmation: ''
+    })
+
+    // Password visibility toggle
+    const showPassword = ref(false)
+
+    // Form reference with type for validation
+    const registerForm = ref<QForm | null>(null)
+
+    // Computed property for loading status
+    const loading = computed(() => authStore.status === 'pending')
+
+    // Redirect target after successful registration
+    const redirectTo = computed(() => ({ name: 'login' }))
+
+    // Toggle password visibility
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value
     }
-  },
-  methods: {
-    validate () {
-      this.$refs.registerForm.validate().then((isValid) => {
+
+    // Form submission handler
+    const onSubmit = async () => {
+      if (registerForm.value) {
+        console.log(1)
+        const isValid = await registerForm.value.validate()
         if (isValid) {
-          this.$router.push('/auth/login')
+          try {
+            await authStore.register(form)
+            router.push(redirectTo.value)
+          } catch (error) {
+            console.error('Registration failed:', error)
+          }
         }
-      })
+      }
+    }
+
+    return {
+      form,
+      showPassword,
+      registerForm,
+      loading,
+      onSubmit,
+      redirectTo,
+      togglePasswordVisibility
     }
   }
-}
+})
 </script>
 
 <style scoped>
