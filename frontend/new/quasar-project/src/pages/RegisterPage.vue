@@ -168,11 +168,9 @@ export default defineComponent({
     // Form submission handler
     const onSubmit = async () => {
       if (registerForm.value) {
-        console.log(1)
         const isValid = await registerForm.value.validate()
         if (isValid) {
           try {
-            console.log(2)
             await authStore.register(form)
             router.push(redirectTo.value)
           } catch (error) {
