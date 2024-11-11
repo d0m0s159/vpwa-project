@@ -24,6 +24,12 @@ class AuthService {
   }
 
   async login (credentials: LoginCredentials): Promise<ApiToken> {
+    try {
+      const response = await api.post<ApiToken>('auth/login', credentials)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
     const response = await api.post<ApiToken>('auth/login', credentials)
     return response.data
   }
