@@ -1,14 +1,16 @@
 import { defineStore } from 'pinia'
 import { authService, authManager } from 'src/services'
 import type { LoginCredentials, RegisterData, User } from 'src/contracts'
+import { useChannelStore } from './module-channels'
 
 // Define the shape of the Auth State
-interface AuthStateInterface {
+export interface AuthStateInterface {
   user: User | null
   status: 'pending' | 'success' | 'error'
   errors: { message: string; field?: string }[]
 }
 
+let store = useChannelStore()
 // Pinia store
 export const useAuthStore = defineStore('auth', {
   // State
@@ -32,6 +34,9 @@ export const useAuthStore = defineStore('auth', {
       this.errors = []
       try {
         const user = await authService.me()
+        if (user?.id !== this.user?.id) {
+          await store.join('general')
+        }
         this.user = user
         this.status = 'success'
         return user !== null
@@ -73,6 +78,7 @@ export const useAuthStore = defineStore('auth', {
       this.status = 'pending'
       try {
         await authService.logout()
+        await store.leave(null)
         this.user = null
         this.status = 'success'
         authManager.removeToken()
