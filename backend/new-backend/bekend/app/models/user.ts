@@ -31,6 +31,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column({ serializeAs: null })
   declare password: string
 
+  @column()
+  declare status: 'active' | 'offline' | 'dnd'
+
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
