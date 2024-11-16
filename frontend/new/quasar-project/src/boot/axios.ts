@@ -15,14 +15,14 @@ declare module '@vue/runtime-core' {
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
+const apiUrl = process.env.API_URL?.replace(/^["']|["']$/g, '')
 const api = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: apiUrl,
   withCredentials: true,
   headers: {}
 })
-
 const DEBUG = process.env.NODE_ENV === 'development'
-
+console.log(process.env.API_URL)
 // add interceptor to add authorization header for api calls
 api.interceptors.request.use(
   (config) => {

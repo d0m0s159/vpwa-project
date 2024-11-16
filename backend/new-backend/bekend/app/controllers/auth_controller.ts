@@ -4,7 +4,9 @@ import type { HttpContext } from '@adonisjs/core/http'
 
 export default class AuthController {
   
+  //table data needs modification
   async register({ request }: HttpContext) {
+    console.log('asdasd')
     const data = await request.validateUsing(registerValidator)
     console.log(data)
     const user = await User.create(data);
@@ -22,7 +24,7 @@ export default class AuthController {
   async logout({ auth }: HttpContext) {
     const user = auth.user!
     await User.accessTokens.delete(user, user.currentAccessToken.identifier)
-    return 1
+    return {message: 'sucess'}
   }
   
   async me({ auth }: HttpContext) {

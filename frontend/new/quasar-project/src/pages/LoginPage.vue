@@ -79,6 +79,7 @@ export default defineComponent({
 
     const onSubmit = async () => {
       loading.value = true
+      console.log(process.env.API_URL)
       try {
         await authStore.login(credentials.value)
         const redirectTo = { name: 'home' }

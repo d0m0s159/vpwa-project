@@ -10,7 +10,7 @@ export interface AuthStateInterface {
   errors: { message: string; field?: string }[]
 }
 
-let store = useChannelStore()
+const store = useChannelStore()
 // Pinia store
 export const useAuthStore = defineStore('auth', {
   // State
