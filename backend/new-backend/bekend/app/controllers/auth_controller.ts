@@ -6,8 +6,10 @@ export default class AuthController {
   
   //table data needs modification
   async register({ request }: HttpContext) {
-    console.log('asdasd')
-    const data = await request.validateUsing(registerValidator)
+    const data : any = await request.validateUsing(registerValidator)
+    data.status = 'active'
+    
+    
     console.log(data)
     const user = await User.create(data);
 
@@ -28,8 +30,9 @@ export default class AuthController {
   }
   
   async me({ auth }: HttpContext) {
-    await auth.check()
-
+    console.log('here')
+    await auth.authenticate()
+    console.log(auth.user)
     return {
       user: auth.user
     }

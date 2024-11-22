@@ -40,7 +40,8 @@ module.exports = configure(function (ctx) {
 
       'axios',
       'pinia',
-      'socket.io'
+      'socket.io',
+      'auth',
     ],
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-css

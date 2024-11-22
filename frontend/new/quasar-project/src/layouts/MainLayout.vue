@@ -30,7 +30,7 @@
                 <q-avatar icon="account_circle"></q-avatar>
                 <q-item-section>Set Status</q-item-section>
               </q-item>
-              <q-item clickable v-close-popup to="/auth/login">
+              <q-item clickable v-close-popup @click="logOut" to="auth/login">
                 <q-avatar icon="directions" />
                 <q-item-section>Log out</q-item-section>
               </q-item>
@@ -121,6 +121,7 @@
 import { ref, computed } from 'vue'
 import { useCurrentUserStore } from 'src/components/stores/useCurrentUserStore'
 import { useChannelsStore } from 'src/components/stores/useChannelsStore'
+import { useAuthStore } from 'src/stores/useAuthStore'
 
 export default {
   setup () {
@@ -130,6 +131,7 @@ export default {
     const statusDialogOpen = ref(false)
     const userStore = useCurrentUserStore()
     const channelStore = useChannelsStore()
+    const authStore = useAuthStore()
 
     const openStatusDialog = () => {
       statusDialogOpen.value = true
@@ -142,6 +144,10 @@ export default {
 
     const selectedChannelName = computed(() => channelStore.selectedChannelName)
 
+    const logOut = () => {
+      authStore.logout()
+    }
+
     return {
       leftDrawerOpen,
       rightDrawerOpen,
@@ -150,7 +156,8 @@ export default {
       setStatus,
       userStore,
       channelStore,
-      selectedChannelName
+      selectedChannelName,
+      logOut
     }
   }
 }

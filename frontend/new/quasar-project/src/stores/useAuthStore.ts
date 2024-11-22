@@ -38,6 +38,7 @@ export const useAuthStore = defineStore('auth', {
           await store.join('general')
         }
         this.user = user
+        console.log(user)
         this.status = 'success'
         return user !== null
       } catch (error: unknown) {

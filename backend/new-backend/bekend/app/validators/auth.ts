@@ -14,7 +14,7 @@ export const registerValidator = vine.compile(
         nickname,
         firstname,
         surname,
-        password
+        password,
     })
 )
 
