@@ -1,4 +1,4 @@
-import { RawMessage, SerializedMessage } from 'src/contracts'
+import { RawMessage, SerializedMessage, User } from 'src/contracts'
 import { SocketManager } from './SocketManager'
 import { useChannelStore } from 'src/stores/module-channels'
 
@@ -17,6 +17,10 @@ class ChannelSocketManager extends SocketManager {
 
   public addMessage (message: RawMessage): Promise<SerializedMessage> {
     return this.emitAsync('addMessage', message)
+  }
+
+  public loadUsers (): Promise<User[]> {
+    return this.emitAsync('loadUsers')
   }
 
   public loadMessages (): Promise<SerializedMessage[]> {

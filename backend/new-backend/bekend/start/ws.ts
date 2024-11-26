@@ -6,6 +6,14 @@ app.ready(() => {
   io?.on('connection', (socket) => {
     console.log(socket.id)
   })
-})
+  const generalNamespace = io?.of('/channels/general')
 
-auth: () => import('#middleware/auth_middleware')
+  generalNamespace?.on('connection', (socket) => {
+    console.log(`Socket connected to /channels/general with ID: ${socket.id}`)
+
+    // Handle events specific to /channels/general
+    socket.on('message', (data) => {
+      console.log('Message in /channels/general namespace:', data)
+    })
+  })
+})

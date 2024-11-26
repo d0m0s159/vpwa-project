@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { authService, authManager } from 'src/services'
 import type { LoginCredentials, RegisterData, User } from 'src/contracts'
 import { useChannelStore } from './module-channels'
+import { api } from 'src/boot/axios'
 
 // Define the shape of the Auth State
 export interface AuthStateInterface {
@@ -35,10 +36,15 @@ export const useAuthStore = defineStore('auth', {
       try {
         const user = await authService.me()
         if (user?.id !== this.user?.id) {
-          await store.join('general')
+          const { data } = await api.post('/load/channels/', user)
+          for (const channel of data) {
+            await store.join(channel)
+          }
+          if (data.length === 0) {
+            await store.join('general')
+          }
         }
         this.user = user
-        console.log(user)
         this.status = 'success'
         return user !== null
       } catch (error: unknown) {

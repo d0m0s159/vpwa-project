@@ -120,7 +120,7 @@
 <script lang="ts">
 import { ref, computed } from 'vue'
 import { useCurrentUserStore } from 'src/components/stores/useCurrentUserStore'
-import { useChannelsStore } from 'src/components/stores/useChannelsStore'
+import { useChannelStore } from 'src/stores/module-channels'
 import { useAuthStore } from 'src/stores/useAuthStore'
 
 export default {
@@ -130,7 +130,7 @@ export default {
 
     const statusDialogOpen = ref(false)
     const userStore = useCurrentUserStore()
-    const channelStore = useChannelsStore()
+    const channelStore = useChannelStore()
     const authStore = useAuthStore()
 
     const openStatusDialog = () => {
@@ -142,7 +142,7 @@ export default {
       statusDialogOpen.value = false
     }
 
-    const selectedChannelName = computed(() => channelStore.selectedChannelName)
+    const selectedChannelName = computed(() => channelStore.active)
 
     const logOut = () => {
       authStore.logout()

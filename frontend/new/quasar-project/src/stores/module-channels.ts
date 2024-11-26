@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { SerializedMessage, RawMessage } from 'src/contracts'
+import { SerializedMessage, RawMessage, User } from 'src/contracts'
 import { channelService } from 'src/services'
 
 export interface ChannelsStateInterface {
@@ -7,6 +7,8 @@ export interface ChannelsStateInterface {
   error: Error | null;
   messages: { [channel: string]: SerializedMessage[] };
   active: string | null;
+  users: { [channel: string]: User[] };
+  notificationsEnabled: boolean;
 }
 
 export const useChannelStore = defineStore('channel', {
@@ -14,7 +16,9 @@ export const useChannelStore = defineStore('channel', {
     loading: false,
     error: null,
     messages: {},
-    active: null
+    active: null,
+    users: {},
+    notificationsEnabled: true
   }),
 
   getters: {

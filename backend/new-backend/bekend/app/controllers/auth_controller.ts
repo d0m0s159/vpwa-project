@@ -10,7 +10,6 @@ export default class AuthController {
     data.status = 'active'
     
     
-    console.log(data)
     const user = await User.create(data);
 
     return User.accessTokens.create(user)
@@ -30,9 +29,7 @@ export default class AuthController {
   }
   
   async me({ auth }: HttpContext) {
-    console.log('here')
     await auth.authenticate()
-    console.log(auth.user)
     return {
       user: auth.user
     }
