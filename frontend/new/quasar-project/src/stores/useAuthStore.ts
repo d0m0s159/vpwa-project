@@ -36,12 +36,9 @@ export const useAuthStore = defineStore('auth', {
       try {
         const user = await authService.me()
         if (user?.id !== this.user?.id) {
-          const { data } = await api.post('/load/channels/', user)
+          const { data } = await api.post('/load/channels/', { id: user?.id })
           for (const channel of data) {
-            await store.join(channel)
-          }
-          if (data.length === 0) {
-            await store.join('general')
+            await store.join(channel.name)
           }
         }
         this.user = user
@@ -83,6 +80,7 @@ export const useAuthStore = defineStore('auth', {
 
     async logout () {
       this.status = 'pending'
+      console.log(this.user)
       try {
         await authService.logout()
         await store.leave(null)

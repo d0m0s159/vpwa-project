@@ -1,19 +1,16 @@
 import app from '@adonisjs/core/services/app'
 import Ws from '#services/Ws'
+import ChannelManager from '#services/ChannelManager'
 app.ready(() => {
   Ws.boot()
   const io = Ws.io
-  io?.on('connection', (socket) => {
-    console.log(socket.id)
-  })
-  const generalNamespace = io?.of('/channels/general')
+  const channelManager = new ChannelManager()
 
-  generalNamespace?.on('connection', (socket) => {
-    console.log(`Socket connected to /channels/general with ID: ${socket.id}`)
+    io?.on('connection', async (socket) => {
+      console.log(`Client connected: ${socket.id}`)
 
-    // Handle events specific to /channels/general
-    socket.on('message', (data) => {
-      console.log('Message in /channels/general namespace:', data)
+      await channelManager.ensureNamespace('general')
     })
-  })
 })
+
+auth: () => import('#middleware/auth_middleware')

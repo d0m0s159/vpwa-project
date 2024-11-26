@@ -14,13 +14,13 @@ export default class Channel extends BaseModel {
   declare isPublic: boolean
 
   @column()
-  declare adminId: number
+  declare adminId: number | null
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
-  declare updatedAt: DateTime
+  declare updatedAt: DateTime 
 
   @column.dateTime()
   declare lastActivity: DateTime
@@ -28,7 +28,7 @@ export default class Channel extends BaseModel {
   @belongsTo(() => User, {
     foreignKey: 'adminId',
   })
-  declare admin: BelongsTo<typeof User>
+  declare admin: BelongsTo<typeof User> | null
 
   @manyToMany(() => User)
   declare users: ManyToMany<typeof User>

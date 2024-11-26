@@ -169,7 +169,6 @@ export default defineComponent({
     const onSubmit = async () => {
       if (registerForm.value) {
         const isValid = await registerForm.value.validate()
-        console.log(process.env.API_URL)
         if (isValid) {
           try {
             await authStore.register(form)

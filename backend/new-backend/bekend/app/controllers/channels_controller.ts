@@ -6,8 +6,7 @@ export default class ChannelsController {
     // Function to load channels for a specific user
     public async loadChannels({ request }: HttpContext) {
       // Access the userId from the params object
-      const userId = 1
-      console.log(request)
+      const userId = request.body().id
   
       // Fetch the user with their associated channels
       const user = await User.query()

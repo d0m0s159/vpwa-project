@@ -22,7 +22,6 @@ const api = axios.create({
   headers: {}
 })
 const DEBUG = process.env.NODE_ENV === 'development'
-console.log(process.env.API_URL)
 // add interceptor to add authorization header for api calls
 api.interceptors.request.use(
   (config) => {
