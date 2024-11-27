@@ -1,4 +1,5 @@
 import { BaseSchema } from '@adonisjs/lucid/schema'
+import { DateTime } from 'luxon'
 
 export default class extends BaseSchema {
   protected tableName = 'users'
@@ -12,8 +13,8 @@ export default class extends BaseSchema {
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
       table.enu('status', ['active', 'offline', 'dnd']).notNullable().defaultTo('offline')
-      table.timestamp('created_at').notNullable()
-      table.timestamp('updated_at').nullable()
+      table.timestamp('created_at').notNullable().defaultTo(DateTime.now())
+      table.timestamp('updated_at').nullable().defaultTo(DateTime.now())
     })
   }
 

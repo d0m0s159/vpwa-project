@@ -11,7 +11,7 @@ export default class AuthController {
     
     
     const user = await User.create(data);
-    await user.related('channels').attach([1])
+    await user.related('channels').attach([1, 2])
 
     return User.accessTokens.create(user)
   }

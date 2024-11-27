@@ -6,8 +6,8 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('channel_id').unsigned().references('channels.id').unique()
-      table.integer('user_id').unsigned().references('users.id').unique()
+      table.integer('channel_id').unsigned().references('channels.id')
+      table.integer('user_id').unsigned().references('users.id')
       table.unique(['channel_id', 'user_id'])
       table.timestamp('created_at')
       table.timestamp('updated_at')

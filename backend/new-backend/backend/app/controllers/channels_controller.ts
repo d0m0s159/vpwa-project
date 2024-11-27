@@ -27,13 +27,6 @@ export default class ChannelsController {
       const channelName = request.body().channel;
       const userId = request.body().user; // Assuming this is the ID of the user
   
-      // Fetch the user instance to ensure it exists (optional, based on your logic)
-      const user = await User.find(userId);
-  
-      if (!user) {
-        return { message: 'User not found' };
-      }
-  
       // Create or update the channel and set the adminId field
       const channel = await Channel.firstOrCreate({
         name: channelName,

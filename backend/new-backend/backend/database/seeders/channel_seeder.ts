@@ -13,7 +13,16 @@ export default class extends BaseSeeder {
         updatedAt: DateTime.now(),
         lastActivity: DateTime.now(),
         admin: null
+      },{
+        name: 'universal',
+        isPublic: true,
+        adminId: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+        lastActivity: DateTime.now(),
+        admin: null
       },
+
 
     ])
   }
