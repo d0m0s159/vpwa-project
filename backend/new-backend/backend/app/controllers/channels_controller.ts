@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Channel from '#models/channel'
 import User from '#models/user'
 import { DateTime } from 'luxon'
+import { channelManager } from '#start/ws'
 
 export default class ChannelsController {
     // Function to load channels for a specific user
@@ -24,17 +25,18 @@ export default class ChannelsController {
     }
 
     public async ensureChannel({ request }: HttpContext) {
-      const channelName = request.body().channel;
+      const channelName = request.body().channelName;
       const userId = request.body().user; // Assuming this is the ID of the user
-  
-      // Create or update the channel and set the adminId field
-      const channel = await Channel.firstOrCreate({
-        name: channelName,
-        adminId: userId,
-        isPublic: true,
-        lastActivity: DateTime.now(),
-      });
-  
-      return channel;
+      const channel = await Channel.findBy('name', channelName)
+      if(!channel){
+        await Channel.create({
+          name: channelName,
+          adminId: (userId != 0) ? userId : null,
+          isPublic: true,
+          lastActivity: DateTime.now(),
+        })
+        channelManager?.ensureNamespace(channelName)
+      }
+      return
     }
   }
