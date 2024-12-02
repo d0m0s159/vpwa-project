@@ -41,7 +41,11 @@ export const useChannelStore = defineStore('channel', {
 
     LOADING_SUCCESS (channel: string, messages: SerializedMessage[]) {
       this.loading = false
-      this.messages[channel] = messages
+      this.messages = {
+        ...this.messages,
+        [channel]: messages
+      }
+      console.log(this.joinedChannels)
     },
 
     LOADING_ERROR (error: Error) {
@@ -68,8 +72,11 @@ export const useChannelStore = defineStore('channel', {
     async join (channel: string) {
       try {
         this.LOADING_START()
-        const messages = await channelService.join(channel).loadMessages()
-        this.LOADING_SUCCESS(channel, messages)
+        const newChannel = await channelService.join(channel)
+        console.log(newChannel)
+        // TODO: spravit message handling const messages = await newChannel.loadMessages()
+
+        this.LOADING_SUCCESS(channel, [])
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         this.LOADING_ERROR(err)

@@ -38,11 +38,13 @@ export const useAuthStore = defineStore('auth', {
         if (user?.id !== this.user?.id) {
           const { data } = await api.post('/load/channels/', { id: user?.id })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const joinPromises = data.channels.map((channel: any) => {
-            console.log('Joining channel:', channel.name)
-            return store.join(channel.name)
-          })
-          await Promise.all(joinPromises)
+          for (const channel of data.channels) {
+            try {
+              store.join(channel.name)
+            } catch (err) {
+              console.error(`Error joining channel ${channel.name}:`, err)
+            }
+          }
         }
         this.user = user
         this.status = 'success'

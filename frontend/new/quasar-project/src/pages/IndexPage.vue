@@ -132,7 +132,7 @@ export default {
     const authStore = useAuthStore()
 
     const channels = computed(() => store.joinedChannels)
-    console.log(channels)
+    console.log(channels.value)
     const joinableChannels = computed(() => [])
 
     const messages = ref<SerializedMessage[]>([])
