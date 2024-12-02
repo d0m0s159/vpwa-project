@@ -1,5 +1,7 @@
+//Do not export from this file, export instance from start/ws
+
 import Ws from '#services/Ws'
-import Channel from '#models/channel' // Assuming you have a Lucid model for channels
+import Channel from '#models/channel'
 
 class ChannelManager {
   private io = Ws.io!
@@ -12,7 +14,6 @@ class ChannelManager {
     }
   }
 
-  // Load all existing channels from the database and create namespaces
   private async loadChannels() {
     const channels = await Channel.all()
 
@@ -21,7 +22,6 @@ class ChannelManager {
     })
   }
 
-  // Create a new namespace and store it in the namespaces map
   private createNamespace(channelName: string) {
     if (this.namespaces.has(channelName)) {
       console.log(`Namespace for channel "${channelName}" already exists`)
@@ -38,15 +38,12 @@ class ChannelManager {
           `Socket connected to /channels/${channelName} with ID: ${socket.id}`
         )
 
-        // Handle events in the namespace
         socket.on('message', (data) => {
           console.log(`Message in ${channelName} namespace:`, data)
 
-          // Broadcast the message to others in the namespace
           socket.broadcast.emit('message', data)
         })
 
-        // Handle disconnection
         socket.on('disconnect', (reason) => {
           console.log(
             `Socket disconnected from /channels/${channelName}: ${reason}`
@@ -54,19 +51,29 @@ class ChannelManager {
         })
       })
 
-      // Save namespace reference
       this.namespaces.set(channelName, namespace)
     }
   }
 
-  // Check if a namespace exists, and if not, create it and a database record
   public async ensureNamespace(channelName: string) {
     if (!this.namespaces.has(channelName)) {
       console.log(`Namespace for channel "${channelName}" does not exist. Creating it...`)
 
-      // Create the channel in the database if it doesn't exist
       const channel = await Channel.firstOrCreate({ name: channelName })
       this.createNamespace(channel.name)
+    }
+  }
+
+  public deleteNamespace(channelName: string) {
+    if (this.namespaces.has(channelName)) {
+      const namespace = this.namespaces.get(channelName)
+      namespace?.sockets.forEach((socket) => {
+        socket.disconnect(true)
+      })
+      
+      this.namespaces.delete(channelName)
+
+      console.log(`Namespace ${channelName} deleted`)
     }
   }
 }

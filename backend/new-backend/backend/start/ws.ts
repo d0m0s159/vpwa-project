@@ -2,13 +2,13 @@ import app from '@adonisjs/core/services/app';
 import Ws from '#services/Ws';
 import ChannelManager from '#services/ChannelManager';
 
-let channelManager: ChannelManager | null = null; // Fix typo: Rename 'channelManger' to 'channelManager'
+let channelManager: ChannelManager | null = null;
 
 app.ready(() => {
   Ws.boot();
   const io = Ws.io;
 
-  channelManager = new ChannelManager(); // Properly assign to the correctly named variable
+  channelManager = new ChannelManager();
   io?.on('connection', async (socket) => {
     console.log(`Client connected: ${socket.id}`);
   });
@@ -16,4 +16,4 @@ app.ready(() => {
 
 auth: () => import('#middleware/auth_middleware');
 
-export { channelManager }; // Export the correctly named variable
+export { channelManager }; // Export this channelManager instance for app to work correctly

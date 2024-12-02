@@ -3,6 +3,7 @@ import Channel from '#models/channel'
 import User from '#models/user'
 import { DateTime } from 'luxon'
 import { channelManager } from '#start/ws'
+import ChannelInvitation from '#models/channel_invitation'
 
 export default class ChannelsController {
 
@@ -43,11 +44,15 @@ export default class ChannelsController {
           await user?.related('channels').attach([channel.id])
         }
         else{
-          // TODO: need to make invitation mechanism
-          const invitation = true
+          const invitation = await ChannelInvitation.query()
+            .where('targetUser', userId)
+            .andWhere('channel_id', channel.id)
+            .first()
           if(invitation){
             const user = await User.find('id', userId)
             await user?.related('channels').attach([channel.id])
+
+            await invitation.delete()
 
             return { success: true, message: 'Channel has been joined' }
           }
@@ -67,7 +72,7 @@ export default class ChannelsController {
 
       if(channel){
         if( channel.admin === user){
-          // TODO: need to handle sockets for users that are joined to this channel
+          channelManager?.deleteNamespace(channelName)
           await channel.delete()
           return { success: true, message: 'Channel has been deleted' }
         }
