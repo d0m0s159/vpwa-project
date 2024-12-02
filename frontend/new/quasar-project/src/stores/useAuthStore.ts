@@ -11,7 +11,6 @@ export interface AuthStateInterface {
   errors: { message: string; field?: string }[]
 }
 
-const store = useChannelStore()
 // Pinia store
 export const useAuthStore = defineStore('auth', {
   // State
@@ -31,6 +30,7 @@ export const useAuthStore = defineStore('auth', {
   // Actions
   actions: {
     async check () {
+      const store = useChannelStore()
       this.status = 'pending'
       this.errors = []
       try {
@@ -46,6 +46,8 @@ export const useAuthStore = defineStore('auth', {
             }
           }
         }
+        console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+        console.log(store.joinedChannels)
         this.user = user
         this.status = 'success'
         return user !== null
@@ -84,6 +86,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout () {
+      const store = useChannelStore()
       this.status = 'pending'
       console.log(this.user)
       try {

@@ -41,11 +41,7 @@ export const useChannelStore = defineStore('channel', {
 
     LOADING_SUCCESS (channel: string, messages: SerializedMessage[]) {
       this.loading = false
-      this.messages = {
-        ...this.messages,
-        [channel]: messages
-      }
-      console.log(this.joinedChannels)
+      this.messages[channel] = messages
     },
 
     LOADING_ERROR (error: Error) {
