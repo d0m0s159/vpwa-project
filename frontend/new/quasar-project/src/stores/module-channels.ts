@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { api } from 'src/boot/axios'
 import { SerializedMessage, RawMessage, User } from 'src/contracts'
 import { channelService } from 'src/services'
 
@@ -66,10 +65,9 @@ export const useChannelStore = defineStore('channel', {
       this.messages[channel].push(message)
     },
 
-    async join (channel: string, userId: number = 0) {
+    async join (channel: string) {
       try {
         this.LOADING_START()
-        await api.post('channels/ensure', { channelName: channel, user: userId })
         const messages = await channelService.join(channel).loadMessages()
         this.LOADING_SUCCESS(channel, messages)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

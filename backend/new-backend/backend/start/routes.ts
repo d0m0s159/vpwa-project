@@ -23,3 +23,5 @@ router.post('auth/logout', [AuthController, 'logout']).as('auth.logout').use(mid
 router.get('auth/me', [AuthController, 'me']).as('auth.me')
 router.post('/load/channels/', [ChannelsController, 'loadChannels'])
 router.post('channels/ensure', [ChannelsController, 'joinChannel'])
+router.post('channels/leave', [ChannelsController, 'leaveChannel'])
+router.post('channels/listUsers', [ChannelsController, 'listUsers'])
