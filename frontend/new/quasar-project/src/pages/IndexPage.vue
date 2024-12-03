@@ -122,9 +122,9 @@
 import { ref, computed, nextTick } from 'vue'
 import { useChannelStore } from 'src/stores/module-channels'
 import { QScrollArea } from 'quasar'
-import { Channel } from 'src/components/channel'
 import { SerializedMessage } from 'src/contracts'
 import { useAuthStore } from 'src/stores/useAuthStore'
+import { api } from 'src/boot/axios'
 
 export default {
   setup () {
@@ -174,19 +174,14 @@ export default {
       if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
         const command = messageText.split(' ')[0]
         const channelName = messageText.slice(command.length).trim()
-        let channelIndex = joinableChannels.value.findIndex((channel:Channel) => channel.name === channelName)
-        if (channelIndex === -1) {
-          // Channel not found, create it
-          store.join(channelName)
-          channelIndex = joinableChannels.value.length - 1 // New channel will be at the end of the joinableChannels list
-        }
-        index.value = channelIndex
+        console.log(authStore.user?.id)
+        await api.post('/channels/join', { channelName, user: Number(authStore.user!.id) })
+        store.join(channelName)
       } else if (messageText.startsWith('/cancel')) {
         if (index.value >= 0) {
           console.log(`Deleted channel: ${selectedChannel.value}`)
-          selectedChannel.value = ''
-          index.value = -1
-          messages.value = []
+          await api.post('/channels/leave', { channelName: selectedChannel.value, user: Number(authStore.user!.id) })
+          store.leave(selectedChannel.value)
         }
       } else if (messageText.startsWith('/list')) {
         if (index.value >= 0) {

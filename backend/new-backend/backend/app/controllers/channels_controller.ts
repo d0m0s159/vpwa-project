@@ -35,12 +35,12 @@ export default class ChannelsController {
         })
         channelManager?.ensureNamespace(channelName)
 
-        const user = await User.find('id', userId)
+        const user = await User.findBy('id', userId)
         await user?.related('channels').attach([newChannel.id])
       }
       else{
         if(channel.isPublic){
-          const user = await User.find('id', userId)
+          const user = await User.findBy('id', userId)
           await user?.related('channels').attach([channel.id])
         }
         else{
@@ -49,7 +49,7 @@ export default class ChannelsController {
             .andWhere('channel_id', channel.id)
             .first()
           if(invitation){
-            const user = await User.find('id', userId)
+            const user = await User.findBy('id', userId)
             await user?.related('channels').attach([channel.id])
 
             await invitation.delete()
@@ -67,9 +67,9 @@ export default class ChannelsController {
     public async leaveChannel({ request }: HttpContext){
       const channelName = request.body().channelName
       const userId = request.body().user
-      const user = await User.find('id', userId)
+      const user = await User.findBy('id', userId)
       const channel = await Channel.findBy('name', channelName)
-
+      console.log(channelName)
       if(channel){
         if( channel.admin === user){
           channelManager?.deleteNamespace(channelName)
@@ -87,7 +87,7 @@ export default class ChannelsController {
     public async listUsers( {request}: HttpContext ){
       const channelName = request.body().channelName
       const userId = request.body().user
-      const user = await User.find('id', userId)
+      const user = await User.findBy('id', userId)
       const channel = await Channel.findBy('name', channelName)
 
       if(channel){
