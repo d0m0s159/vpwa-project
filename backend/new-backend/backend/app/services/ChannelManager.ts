@@ -70,10 +70,34 @@ class ChannelManager {
           socket.broadcast.emit('message', newData)
         })
 
-        socket.on('loadMessages', async (data, callback) => {
+        socket.on('loadMessages', async (callback) => {
           const channel = await Channel.findBy('name', channelName)
-          const messages = await Message.findBy('channel_id', channel?.id)
-          if (callback) callback(null, messages);
+          const messages = await Message.query().where('channel_id', channel!.id)
+          const serialized_messages: SerializedMessage[] = []
+          for(const message of messages){
+            const user = await User.findBy('id', message.userId)
+            const temp_message: SerializedMessage = {
+              createdBy: message.userId,
+              content: message.text,
+              channelId: message.channelId,
+              createdAt: message.createdAt.toString(),
+              updatedAt: message.createdAt.toString(),
+              id: message.id,
+              author: {
+                id: message.userId,
+                email: user!.email
+              }
+            }
+            serialized_messages.push(temp_message)
+          }
+          if (callback) {
+            if (serialized_messages){
+              callback(null, serialized_messages)
+            }
+            else{
+              callback(null, [])};
+            }
+          console.log(channelName, messages)
         })
 
         socket.on('disconnect', (reason) => {

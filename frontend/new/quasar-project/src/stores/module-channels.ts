@@ -70,9 +70,9 @@ export const useChannelStore = defineStore('channel', {
         this.LOADING_START()
         const newChannel = await channelService.join(channel)
         console.log(newChannel)
-        // TODO: spravit message handling const messages = await newChannel.loadMessages()
+        const messages = await newChannel.loadMessages()
 
-        this.LOADING_SUCCESS(channel, [])
+        this.LOADING_SUCCESS(channel, messages)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         this.LOADING_ERROR(err)
