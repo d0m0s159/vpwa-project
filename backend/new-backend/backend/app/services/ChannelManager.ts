@@ -2,6 +2,10 @@
 
 import Ws from '#services/Ws'
 import Channel from '#models/channel'
+import { SerializedMessage } from '../contracts/message.js'
+import Message from '#models/message'
+import { DateTime } from 'luxon'
+import User from '#models/user'
 
 class ChannelManager {
   private io = Ws.io!
@@ -38,10 +42,32 @@ class ChannelManager {
           `Socket connected to /channels/${channelName} with ID: ${socket.id}`
         )
 
-        socket.on('message', (data) => {
+        socket.on('addMessage', async (data, callback) => {
           console.log(`Message in ${channelName} namespace:`, data)
+          const channel = await Channel.findBy('name', channelName)
+          const user = await User.findBy('email', data.userEmail)
+          const message = await Message.create({
+            userId: user!.id,
+            text: data.message,
+            channelId: channel?.id
+          })
 
-          socket.broadcast.emit('message', data)
+          const newData: SerializedMessage = {
+            createdBy: user!.id,
+            content: data.text,
+            channelId: channel!.id,
+            createdAt: DateTime.now().toString(),
+            updatedAt: DateTime.now().toString(),
+            id: message.id,
+            author: {
+              id: user!.id,
+              email: user!.email
+            }
+          }
+
+          if (callback) callback(null, newData);
+
+          socket.broadcast.emit('message', newData)
         })
 
         socket.on('disconnect', (reason) => {

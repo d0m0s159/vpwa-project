@@ -90,7 +90,9 @@ export const useChannelStore = defineStore('channel', {
     },
 
     async addMessage (channel: string, message: RawMessage) {
+      console.log('writing message')
       const newMessage = await channelService.in(channel)?.addMessage(message)
+      console.log('message came')
       if (newMessage) {
         this.NEW_MESSAGE(channel, newMessage)
       }

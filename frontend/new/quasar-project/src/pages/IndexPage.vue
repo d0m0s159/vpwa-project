@@ -193,9 +193,10 @@ export default {
           userListDialog.value = true
         }
       } else if (messageText && store.active) {
+        console.log('adding message')
+        console.log(store.active)
         store.addMessage(store.active, messageText)
         limit++
-        messages.value = fullMessages.value.slice(-limit)
         await nextTick()
         scrollToEnd()
       }

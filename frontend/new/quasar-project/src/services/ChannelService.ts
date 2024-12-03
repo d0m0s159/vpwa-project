@@ -1,6 +1,7 @@
 import { RawMessage, SerializedMessage, User } from 'src/contracts'
 import { SocketManager } from './SocketManager'
 import { useChannelStore } from 'src/stores/module-channels'
+import { useAuthStore } from 'src/stores/useAuthStore'
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -16,7 +17,9 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public addMessage (message: RawMessage): Promise<SerializedMessage> {
-    return this.emitAsync('addMessage', message)
+    const userStore = useAuthStore()
+    const data = { message, userEmail: userStore.user?.email }
+    return this.emitAsync('addMessage', data)
   }
 
   public loadUsers (): Promise<User[]> {
