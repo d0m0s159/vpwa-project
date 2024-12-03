@@ -70,6 +70,12 @@ class ChannelManager {
           socket.broadcast.emit('message', newData)
         })
 
+        socket.on('loadMessages', async (data, callback) => {
+          const channel = await Channel.findBy('name', channelName)
+          const messages = await Message.findBy('channel_id', channel?.id)
+          if (callback) callback(null, messages);
+        })
+
         socket.on('disconnect', (reason) => {
           console.log(
             `Socket disconnected from /channels/${channelName}: ${reason}`
