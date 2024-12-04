@@ -69,7 +69,7 @@ export default class ChannelsController {
       const userId = request.body().user
       const user = await User.findBy('id', userId)
       const channel = await Channel.findBy('name', channelName)
-      console.log(channelName)
+
       if(channel){
         if( channel.admin === user){
           channelManager?.deleteNamespace(channelName)

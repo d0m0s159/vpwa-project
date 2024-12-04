@@ -125,6 +125,7 @@ import { QScrollArea } from 'quasar'
 import { SerializedMessage } from 'src/contracts'
 import { useAuthStore } from 'src/stores/useAuthStore'
 import { api } from 'src/boot/axios'
+import globalSocketManager from 'src/services/GlobalSocketManager'
 
 export default {
   setup () {
@@ -187,6 +188,8 @@ export default {
         if (index.value >= 0) {
           userListDialog.value = true
         }
+      } else if (messageText.startsWith('/invite')) {
+        globalSocketManager.sendInvitation(authStore.user!.email, store.active!)
       } else if (messageText && store.active) {
         console.log('adding message')
         console.log(store.active)

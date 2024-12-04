@@ -97,7 +97,6 @@ class ChannelManager {
             else{
               callback(null, [])};
             }
-          console.log(channelName, messages)
         })
 
         socket.on('disconnect', (reason) => {

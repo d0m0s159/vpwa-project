@@ -3,6 +3,7 @@ import { authService, authManager } from 'src/services'
 import type { LoginCredentials, RegisterData, User } from 'src/contracts'
 import { useChannelStore } from './module-channels'
 import { api } from 'src/boot/axios'
+import globalSocketManager from 'src/services/GlobalSocketManager'
 
 // Define the shape of the Auth State
 export interface AuthStateInterface {
@@ -46,9 +47,8 @@ export const useAuthStore = defineStore('auth', {
             }
           }
         }
-        console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
-        console.log(store.joinedChannels)
         this.user = user
+        globalSocketManager.registerUser(this.user!.email)
         this.status = 'success'
         return user !== null
       } catch (error: unknown) {
