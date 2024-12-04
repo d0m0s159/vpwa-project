@@ -9,7 +9,7 @@ export default class extends BaseSchema {
       table.increments('id').notNullable()
       table.string('firstname').nullable()
       table.string('surname').nullable()
-      table.string('nickname').nullable()
+      table.string('nickname').unique()
       table.string('email', 254).notNullable().unique()
       table.string('password').notNullable()
       table.enu('status', ['active', 'offline', 'dnd']).notNullable().defaultTo('offline')

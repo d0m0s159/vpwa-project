@@ -34,7 +34,7 @@
                   <q-chat-message
                     v-for="(message, index) in latestMessages"
                     :key="index"
-                    :name="message.author.email"
+                    :name="message.author.nickname"
                     :text="[message.content]"
                     :stamp="message.createdAt"
                     :sent="isUser(message.author.id)"

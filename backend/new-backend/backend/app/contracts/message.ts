@@ -1,5 +1,4 @@
 export interface SerializedMessage {
-    createdBy: number
     content: string
     channelId: number
     createdAt: string
@@ -10,5 +9,6 @@ export interface SerializedMessage {
 
 export interface User {
     id: number
+    nickname: string
     email: string
 }

@@ -53,7 +53,6 @@ class ChannelManager {
           })
 
           const newData: SerializedMessage = {
-            createdBy: user!.id,
             content: data.message,
             channelId: channel!.id,
             createdAt: DateTime.now().toString(),
@@ -61,6 +60,7 @@ class ChannelManager {
             id: message.id,
             author: {
               id: user!.id,
+              nickname: user!.nickname!,
               email: user!.email
             }
           }
@@ -77,7 +77,6 @@ class ChannelManager {
           for(const message of messages){
             const user = await User.findBy('id', message.userId)
             const temp_message: SerializedMessage = {
-              createdBy: message.userId,
               content: message.text,
               channelId: message.channelId,
               createdAt: message.createdAt.toString(),
@@ -85,6 +84,7 @@ class ChannelManager {
               id: message.id,
               author: {
                 id: message.userId,
+                nickname: user!.nickname!,
                 email: user!.email
               }
             }

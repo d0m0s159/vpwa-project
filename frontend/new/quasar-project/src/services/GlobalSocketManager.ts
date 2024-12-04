@@ -13,13 +13,12 @@ export class GlobalSocketManager extends SocketManager {
     })
   }
 
-  registerUser (userEmail: string) {
-    console.log('trying to register')
-    return this.emitAsync('registerUser', { userEmail })
+  registerUser (userNickname: string) {
+    return this.emitAsync('registerUser', { userNickname })
   }
 
-  sendInvitation (userEmail: string, channelName: string) {
-    return this.emitAsync('invitation', { userEmail, channelName })
+  sendInvitation (userNickname: string, channelName: string) {
+    return this.emitAsync('invitation', { userNickname, channelName })
   }
 }
 

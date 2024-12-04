@@ -17,8 +17,8 @@ app.ready(() => {
     console.log(`Client connected: ${socket.id}`)
 
     socket.on('registerUser', (data, callback) => {
-      userSocketMap.set(data.userEmail, socket.id)
-      console.log(`User ${data.userEmail} registered with socket ID: ${socket.id}`)
+      userSocketMap.set(data.userName, socket.id)
+      console.log(`User ${data.userName} registered with socket ID: ${socket.id}`)
 
       if (callback) callback(null, true)
     })
