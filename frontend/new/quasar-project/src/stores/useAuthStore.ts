@@ -48,7 +48,9 @@ export const useAuthStore = defineStore('auth', {
           }
         }
         this.user = user
-        globalSocketManager.registerUser(this.user!.nickname)
+        if (user) {
+          globalSocketManager.registerUser(this.user!.nickname)
+        }
         this.status = 'success'
         return user !== null
       } catch (error: unknown) {

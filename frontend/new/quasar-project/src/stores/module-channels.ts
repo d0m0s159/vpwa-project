@@ -6,6 +6,7 @@ export interface ChannelsStateInterface {
   loading: boolean;
   error: Error | null;
   messages: { [channel: string]: SerializedMessage[] };
+  joinable: {[channel: string]: number}
   active: string | null;
   users: { [channel: string]: User[] };
   notificationsEnabled: boolean;
@@ -16,6 +17,7 @@ export const useChannelStore = defineStore('channel', {
     loading: false,
     error: null,
     messages: {},
+    joinable: {},
     active: null,
     users: {},
     notificationsEnabled: true
@@ -30,7 +32,9 @@ export const useChannelStore = defineStore('channel', {
     lastMessageOf: (state) => (channel: string) => {
       const messages = state.messages[channel]
       return messages && messages.length > 0 ? messages[messages.length - 1] : null
-    }
+    },
+
+    joinableChannels: (state) => Object.keys(state.joinable)
   },
 
   actions: {
@@ -95,6 +99,13 @@ export const useChannelStore = defineStore('channel', {
       console.log('message came')
       if (newMessage) {
         this.NEW_MESSAGE(channel, newMessage)
+      }
+    },
+
+    addJoinable (channel: string, invitationId: number) {
+      console.log('New invitation')
+      if (!this.messages[channel]) {
+        this.joinable[channel] = invitationId
       }
     }
   }

@@ -189,7 +189,9 @@ export default {
           userListDialog.value = true
         }
       } else if (messageText.startsWith('/invite')) {
-        globalSocketManager.sendInvitation(authStore.user!.email, store.active!)
+        const command = messageText.split(' ')[0]
+        const nickname = messageText.slice(command.length).trim()
+        globalSocketManager.sendInvitation(nickname, store.active!)
       } else if (messageText && store.active) {
         console.log('adding message')
         console.log(store.active)

@@ -1,4 +1,5 @@
 import { SocketManager } from 'src/services/SocketManager'
+import { useChannelStore } from 'src/stores/module-channels'
 
 export class GlobalSocketManager extends SocketManager {
   constructor () {
@@ -10,11 +11,13 @@ export class GlobalSocketManager extends SocketManager {
 
     socket.on('invitation', (data) => {
       console.log('Invitation data received:', data)
+      const channelStore = useChannelStore()
+      channelStore.addJoinable(data.channel, data.invitationId)
     })
   }
 
   registerUser (userNickname: string) {
-    return this.emitAsync('registerUser', { userNickname })
+    return this.emitAsync('registerUser', { nickname: userNickname })
   }
 
   sendInvitation (userNickname: string, channelName: string) {

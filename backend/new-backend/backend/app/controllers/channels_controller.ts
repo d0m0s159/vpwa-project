@@ -40,6 +40,13 @@ export default class ChannelsController {
       }
       else{
         if(channel.isPublic){
+          const invitation = await ChannelInvitation.query()
+            .where('targetUser', userId)
+            .andWhere('channel_id', channel.id)
+            .first()
+          if(invitation){
+            await invitation.delete()
+          }
           const user = await User.findBy('id', userId)
           await user?.related('channels').attach([channel.id])
         }
