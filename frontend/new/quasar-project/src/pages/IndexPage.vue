@@ -32,7 +32,7 @@
                     </div>
                   </template>
                   <q-chat-message
-                    v-for="(message, index) in messages"
+                    v-for="(message, index) in latestMessages"
                     :key="index"
                     :name="message.author.email"
                     :text="[message.content]"
@@ -252,6 +252,11 @@ export default {
       return id === authStore.user?.id
     }
 
+    const latestMessages = computed(() => {
+      console.log('Current messages:', store.currentMessages)
+      return store.currentMessages
+    })
+
     return {
       channels,
       joinableChannels,
@@ -271,7 +276,8 @@ export default {
       selectedChannel,
       selectChannel,
       index,
-      isUser
+      isUser,
+      latestMessages
     }
   }
 }

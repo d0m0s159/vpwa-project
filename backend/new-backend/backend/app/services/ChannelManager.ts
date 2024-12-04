@@ -9,7 +9,7 @@ import User from '#models/user'
 
 class ChannelManager {
   private io = Ws.io!
-  
+
   private namespaces: Map<string, ReturnType<typeof this.io.of>> = new Map()
 
   constructor() {
@@ -54,7 +54,7 @@ class ChannelManager {
 
           const newData: SerializedMessage = {
             createdBy: user!.id,
-            content: data.text,
+            content: data.message,
             channelId: channel!.id,
             createdAt: DateTime.now().toString(),
             updatedAt: DateTime.now().toString(),
@@ -126,7 +126,7 @@ class ChannelManager {
       namespace?.sockets.forEach((socket) => {
         socket.disconnect(true)
       })
-      
+
       this.namespaces.delete(channelName)
 
       console.log(`Namespace ${channelName} deleted`)
