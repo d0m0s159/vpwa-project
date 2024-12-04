@@ -131,7 +131,6 @@ export default {
   setup () {
     const store = useChannelStore()
     const authStore = useAuthStore()
-
     const channels = computed(() => store.joinedChannels)
     console.log(channels)
 
@@ -140,7 +139,7 @@ export default {
     console.log(channels.value)
     store.CLEAR_CHANNEL('test-channel')
     console.log('After clearing channel:', store.joinedChannels)
-    const joinableChannels = computed(() => [])
+    const joinableChannels = computed(() => store.joinableChannels)
 
     const messages = ref<SerializedMessage[]>([])
     const fullMessages = ref<SerializedMessage[]>([])

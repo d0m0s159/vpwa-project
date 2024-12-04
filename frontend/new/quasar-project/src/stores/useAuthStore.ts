@@ -46,6 +46,15 @@ export const useAuthStore = defineStore('auth', {
               console.error(`Error joining channel ${channel.name}:`, err)
             }
           }
+
+          for (const channel of data.joinableChannels) {
+            try {
+              console.log(`${channel.name},${channel.invitationId}`)
+              store.addJoinable(channel.name, channel.invitationId)
+            } catch (err) {
+              console.error(`Error joining channel ${channel.name}:`, err)
+            }
+          }
         }
         this.user = user
         if (user) {

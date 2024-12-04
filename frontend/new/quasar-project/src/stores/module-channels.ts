@@ -103,7 +103,6 @@ export const useChannelStore = defineStore('channel', {
     },
 
     addJoinable (channel: string, invitationId: number) {
-      console.log('New invitation')
       if (!this.messages[channel]) {
         this.joinable[channel] = invitationId
       }

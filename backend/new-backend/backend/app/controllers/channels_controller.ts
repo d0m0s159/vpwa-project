@@ -18,7 +18,15 @@ export default class ChannelsController {
         return { succes: false, message: 'User not found' }
       }
 
-      return { succes: true, channels: user.channels}
+      const invitations = await ChannelInvitation.query().where('target_user_id', userId)
+      const joinableChannels = [] as {name:string, invitationId:number}[]
+      for(const invitation of invitations){
+        const channel = await Channel.findBy('id', invitation.id)
+        joinableChannels.push({name: channel!.name, invitationId: invitation.id})
+      }
+      console.log(joinableChannels)
+
+      return { succes: true, channels: user.channels, joinableChannels: joinableChannels}
     }
 
     public async joinChannel({ request }: HttpContext) {
@@ -41,7 +49,7 @@ export default class ChannelsController {
       else{
         if(channel.isPublic){
           const invitation = await ChannelInvitation.query()
-            .where('targetUser', userId)
+            .where('target_user_id', userId)
             .andWhere('channel_id', channel.id)
             .first()
           if(invitation){
@@ -52,7 +60,7 @@ export default class ChannelsController {
         }
         else{
           const invitation = await ChannelInvitation.query()
-            .where('targetUser', userId)
+            .where('target_user_id', userId)
             .andWhere('channel_id', channel.id)
             .first()
           if(invitation){
@@ -98,7 +106,7 @@ export default class ChannelsController {
       const channel = await Channel.findBy('name', channelName)
 
       if(channel){
-        const isRelated = await user?.related('channels').query().where('id', channel.id)
+        const isRelated = await user?.related('channels').query().where('channels.id', channel.id).first()
 
         if (isRelated) {
           const users = await channel.related('users').query()

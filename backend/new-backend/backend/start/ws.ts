@@ -31,19 +31,30 @@ app.ready(() => {
       const user = await User.findBy('nickname', data.userNickname)
       if(channel && user){
         const socketId = userSocketMap.get(user.nickname!)
-        const invitation = await ChannelInvitation.create({
-          channelId: channel.id,
-          targetUserId: user.id,
-          performedBy: data.userId
-        })
-        if(socketId){
-          io.to(socketId).emit('invitation', {
-            invitationId: invitation.id,
-            channel: channel.name,
-            message: 'You have been invited to a new channel!'
+        const findInvitation = await ChannelInvitation.query()
+            .where('target_user_id', user.id)
+            .andWhere('channel_id', channel.id)
+            .first()
+        const isRelated = await user?.related('channels').query().where('channels.id', channel.id).first()
+
+        if(!findInvitation && !isRelated){
+          const invitation = await ChannelInvitation.create({
+            channelId: channel.id,
+            targetUserId: user.id,
+            performedBy: data.userId
           })
+          console.log(socketId)
+          if(socketId){
+            console.log('invitation sending')
+            io.to(socketId).emit('invitation', {
+              invitationId: invitation.id,
+              channel: channel.name,
+              message: 'You have been invited to a new channel!'
+            })
+          }
+          if (callback) callback(null, { status: 'sent' })
         }
-        if (callback) callback(null, { status: 'sent' })
+        if (callback) callback(null, { status: 'use has been already invited' })
       }
       if (callback) callback(null, { status: 'no user' })
     })
