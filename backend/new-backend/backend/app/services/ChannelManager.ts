@@ -42,6 +42,10 @@ class ChannelManager {
           `Socket connected to /channels/${channelName} with ID: ${socket.id}`
         )
 
+        socket.on('kick', async (data, callback) => {
+          if(callback) callback('stringy')
+        })
+
         socket.on('addMessage', async (data, callback) => {
           console.log(`Message in ${channelName} namespace:`, data)
           const channel = await Channel.findBy('name', channelName)
@@ -105,6 +109,7 @@ class ChannelManager {
           )
         })
       })
+
 
       this.namespaces.set(channelName, namespace)
     }

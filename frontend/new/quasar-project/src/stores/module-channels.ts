@@ -84,6 +84,18 @@ export const useChannelStore = defineStore('channel', {
       }
     },
 
+    async kick (channel: string, nickname: string) {
+      try {
+        await channelService.in(channel)?.kick(nickname)
+        console.log(channel)
+        console.log(nickname)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        this.LOADING_ERROR(err)
+        throw err
+      }
+    },
+
     async leave (channel: string | null) {
       const leaving = channel !== null ? [channel] : this.joinedChannels
       leaving.forEach((c) => {

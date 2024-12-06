@@ -33,6 +33,10 @@ class ChannelSocketManager extends SocketManager {
   public loadMessages (): Promise<SerializedMessage[]> {
     return this.emitAsync('loadMessages')
   }
+
+  public kick (nickname: string): Promise<unknown> {
+    return this.emitAsync('kick', { userNickname: nickname })
+  }
 }
 
 class ChannelService {
