@@ -6,6 +6,8 @@ import { SerializedMessage } from '../contracts/message.js'
 import Message from '#models/message'
 import { DateTime } from 'luxon'
 import User from '#models/user'
+import Kick from '#models/kick'
+import Ban from '#models/ban'
 
 class ChannelManager {
   private io = Ws.io!
@@ -43,7 +45,73 @@ class ChannelManager {
         )
 
         socket.on('kick', async (data, callback) => {
-          if(callback) callback('stringy')
+          console.log(`Kick in ${channelName} namespace:`, data.nickname)
+          const user = await User.findBy('nickname', data.nickname)
+          const channel = await Channel.findBy('name', channelName)
+          const isRelated = await user?.related('channels').query().where('channels.id', channel!.id).first()
+          if(isRelated){
+            if(channel?.adminId === data.kickedBy){
+              const ban = await Kick.query().where('user_id', user!.id)
+                .andWhere('channel_id', channel!.id).first()
+              if(!ban){
+                await Ban.create({
+                  userId: user?.id,
+                  channelId: channel?.id
+                })
+
+                const kicks = await Kick.query().where('target_user_id', user!.id)
+                .andWhere('channel_id', channel!.id)
+
+                for(const kick of kicks){
+                  await kick.delete()
+                }
+  
+                if (callback) callback(null, 'banned');
+                socket.broadcast.emit('ban', user?.id)
+              }
+              else{
+                if (callback) callback(null, 'User was already banned');
+              }
+            }
+            else{
+              const kick = await Kick.query().where('target_user_id', user!.id)
+                .andWhere('performed_by', data.kickedBy)
+                .andWhere('channel_id', channel!.id).first()
+              if(!kick){
+                await Kick.create({
+                  channelId: channel?.id,
+                  performedBy: data.kickedBy,
+                  targetUserId: user?.id
+                })
+                if(callback) callback({status: 'User kicked'})
+
+                  const kickCount = await Kick.query()
+                  .where('target_user_id', user!.id)
+                  .andWhere('channel_id', channel!.id)
+
+                  if (kickCount.length >= 3) {
+                    await Ban.create({
+                      channelId: channel!.id,
+                      userId: user!.id,
+                    })
+
+                    user?.related('channels').detach([channel!.id])
+
+                    const kicks = await Kick.query().where('target_user_id', user!.id)
+                    .andWhere('channel_id', channel!.id)
+
+                    for(const kick of kicks){
+                      await kick.delete()
+                    }
+                    
+                    socket.broadcast.emit('ban', user?.id)
+                  }
+              }
+
+              if(callback) callback({status: 'You already kicked this user'})
+            }
+          }
+          if(callback) callback({status: 'Not existing user'})
         })
 
         socket.on('addMessage', async (data, callback) => {

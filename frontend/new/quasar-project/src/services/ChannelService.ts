@@ -18,6 +18,10 @@ class ChannelSocketManager extends SocketManager {
     this.socket.on('channel_deleted', () => {
       this.store.leave(channel)
     })
+
+    this.socket.on('ban', () => {
+      this.store.leave(channel)
+    })
   }
 
   public addMessage (message: RawMessage): Promise<SerializedMessage> {
@@ -35,7 +39,8 @@ class ChannelSocketManager extends SocketManager {
   }
 
   public kick (nickname: string): Promise<unknown> {
-    return this.emitAsync('kick', { userNickname: nickname })
+    const userStore = useAuthStore()
+    return this.emitAsync('kick', { nickname, kickedBy: userStore.user?.id })
   }
 }
 

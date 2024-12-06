@@ -4,6 +4,7 @@ import User from '#models/user'
 import { DateTime } from 'luxon'
 import { channelManager } from '#start/ws'
 import ChannelInvitation from '#models/channel_invitation'
+import Ban from '#models/ban'
 
 export default class ChannelsController {
 
@@ -47,34 +48,41 @@ export default class ChannelsController {
         await user?.related('channels').attach([newChannel.id])
       }
       else{
-        if(channel.isPublic){
-          const invitation = await ChannelInvitation.query()
-            .where('target_user_id', userId)
-            .andWhere('channel_id', channel.id)
-            .first()
-          if(invitation){
-            await invitation.delete()
-          }
-          const user = await User.findBy('id', userId)
-          await user?.related('channels').attach([channel.id])
-        }
-        else{
-          const invitation = await ChannelInvitation.query()
-            .where('target_user_id', userId)
-            .andWhere('channel_id', channel.id)
-            .first()
-          if(invitation){
+        const ban = await Ban.query()
+          .where('channel_id', channel.id)
+          .andWhere('user_id', userId).first()
+        console.log(!ban)
+        if(!ban){
+          if(channel.isPublic){
+            const invitation = await ChannelInvitation.query()
+              .where('target_user_id', userId)
+              .andWhere('channel_id', channel.id)
+              .first()
+            if(invitation){
+              await invitation.delete()
+            }
             const user = await User.findBy('id', userId)
             await user?.related('channels').attach([channel.id])
-
-            await invitation.delete()
-
-            return { success: true, message: 'Channel has been joined' }
           }
           else{
-            return { success: false, message: 'Channel is private. Invitation required' }
+            const invitation = await ChannelInvitation.query()
+              .where('target_user_id', userId)
+              .andWhere('channel_id', channel.id)
+              .first()
+            if(invitation){
+              const user = await User.findBy('id', userId)
+              await user?.related('channels').attach([channel.id])
+  
+              await invitation.delete()
+  
+              return { success: true, message: 'Channel has been joined' }
+            }
+            else{
+              return { success: false, message: 'Channel is private. Invitation required' }
+            }
           }
         }
+        return { success: false, message: 'You are banned' }
       }
       return { success: true, message: 'Channel has been created' }
     }
@@ -87,6 +95,7 @@ export default class ChannelsController {
 
       if(channel){
         if( channel.adminId === user?.id){
+          await user?.related('channels').detach([channel.id])
           channelManager?.deleteNamespace(channelName)
           await channel.delete()
           return { success: true, message: 'Channel has been deleted' }

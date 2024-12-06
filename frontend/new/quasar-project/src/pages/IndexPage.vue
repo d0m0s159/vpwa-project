@@ -174,8 +174,10 @@ export default {
         const command = messageText.split(' ')[0]
         const channelName = messageText.slice(command.length).trim()
         console.log(authStore.user?.id)
-        await api.post('/channels/join', { channelName, user: Number(authStore.user!.id) })
-        store.join(channelName)
+        const response = await api.post('/channels/join', { channelName, user: Number(authStore.user!.id) })
+        if (response.data.success) {
+          store.join(channelName)
+        }
       } else if (messageText.startsWith('/cancel')) {
         if (index.value >= 0) {
           console.log(`Deleted channel: ${store.active}`)
@@ -189,10 +191,10 @@ export default {
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()
         globalSocketManager.sendInvitation(nickname, store.active!)
-      } else if (messageText.startsWith('/invite')) {
+      } else if (messageText.startsWith('/kick')) {
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()
-        console.log(nickname)
+        store.kick(store.active!, nickname)
       } else if (messageText && store.active) {
         console.log('adding message')
         console.log(store.active)
