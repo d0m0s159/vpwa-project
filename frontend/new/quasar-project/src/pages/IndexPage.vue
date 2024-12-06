@@ -170,7 +170,6 @@ export default {
 
     const sendMsg = async () => {
       const messageText = text.value.trim()
-
       if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
         const command = messageText.split(' ')[0]
         const channelName = messageText.slice(command.length).trim()
@@ -179,9 +178,8 @@ export default {
         store.join(channelName)
       } else if (messageText.startsWith('/cancel')) {
         if (index.value >= 0) {
-          console.log(`Deleted channel: ${selectedChannel.value}`)
-          await api.post('/channels/leave', { channelName: selectedChannel.value, user: Number(authStore.user!.id) })
-          store.leave(selectedChannel.value)
+          console.log(`Deleted channel: ${store.active}`)
+          await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id) })
         }
       } else if (messageText.startsWith('/list')) {
         if (index.value >= 0) {
@@ -235,10 +233,12 @@ export default {
       joinDialog.value = true
     }
 
-    const joinChannel = () => {
+    const joinChannel = async () => {
       if (index.value >= 0) {
-        // store.moveChannelToJoined(index.value)
         console.log(`Joined channel: ${selectedChannel.value}`)
+        await api.post('/channels/join', { channelName: selectedChannel.value, user: Number(authStore.user!.id) })
+        store.join(selectedChannel.value)
+        delete store.joinable[selectedChannel.value]
         joinDialog.value = false
       }
     }

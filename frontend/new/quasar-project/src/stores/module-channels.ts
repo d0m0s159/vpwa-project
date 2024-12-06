@@ -86,7 +86,6 @@ export const useChannelStore = defineStore('channel', {
 
     async leave (channel: string | null) {
       const leaving = channel !== null ? [channel] : this.joinedChannels
-
       leaving.forEach((c) => {
         channelService.leave(c)
         this.CLEAR_CHANNEL(c)

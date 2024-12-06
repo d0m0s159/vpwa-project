@@ -122,6 +122,12 @@ class ChannelManager {
   public deleteNamespace(channelName: string) {
     if (this.namespaces.has(channelName)) {
       const namespace = this.namespaces.get(channelName)
+
+      namespace?.emit('channel_deleted', {
+        channel: channelName,
+        message: `Channel "${channelName}" has been deleted.`,
+      })
+
       namespace?.sockets.forEach((socket) => {
         socket.disconnect(true)
       })

@@ -86,7 +86,7 @@ export default class ChannelsController {
       const channel = await Channel.findBy('name', channelName)
 
       if(channel){
-        if( channel.admin === user){
+        if( channel.adminId === user?.id){
           channelManager?.deleteNamespace(channelName)
           await channel.delete()
           return { success: true, message: 'Channel has been deleted' }
