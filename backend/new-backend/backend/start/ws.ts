@@ -4,6 +4,7 @@ import ChannelManager from '#services/ChannelManager'
 import Channel from '#models/channel'
 import ChannelInvitation from '#models/channel_invitation'
 import User from '#models/user'
+import Ban from '#models/ban'
 
 let channelManager: ChannelManager | null = null
 
@@ -27,6 +28,7 @@ app.ready(() => {
     })
 
     socket.on('invitation', async (data, callback) => {
+      console.log('new invitation')
       const channel = await Channel.findBy('name', data.channelName)
       const user = await User.findBy('nickname', data.userNickname)
       if(channel && user){
@@ -38,19 +40,42 @@ app.ready(() => {
         const isRelated = await user?.related('channels').query().where('channels.id', channel.id).first()
 
         if(!findInvitation && !isRelated){
-          const invitation = await ChannelInvitation.create({
-            channelId: channel.id,
-            targetUserId: user.id,
-            performedBy: data.userId
-          })
-          console.log(socketId)
-          if(socketId){
-            console.log('invitation sending')
-            io.to(socketId).emit('invitation', {
-              invitationId: invitation.id,
-              channel: channel.name,
-              message: 'You have been invited to a new channel!'
+          if(channel.isPublic){
+            const invitation = await ChannelInvitation.create({
+              channelId: channel.id,
+              targetUserId: user.id,
+              performedBy: data.userId
             })
+            console.log(socketId)
+            if(socketId){
+              console.log('invitation sending')
+              io.to(socketId).emit('invitation', {
+                invitationId: invitation.id,
+                channel: channel.name,
+                message: 'You have been invited to a new channel!'
+              })
+            }
+          }
+          else{
+            if(channel.adminId === data.invitedBy){
+              const ban = await Ban.query().where('user_id', user!.id)
+                .andWhere('channel_id', channel!.id).first()
+              ban?.delete()
+              const invitation = await ChannelInvitation.create({
+                channelId: channel.id,
+                targetUserId: user.id,
+                performedBy: data.userId
+              })
+              console.log(socketId)
+              if(socketId){
+                console.log('invitation sending')
+                io.to(socketId).emit('invitation', {
+                  invitationId: invitation.id,
+                  channel: channel.name,
+                  message: 'You have been invited to a new channel!'
+                })
+              }
+            }
           }
           if (callback) callback(null, { status: 'sent' })
         }

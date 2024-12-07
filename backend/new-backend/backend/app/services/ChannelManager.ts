@@ -45,15 +45,14 @@ class ChannelManager {
         )
 
         socket.on('typing', (data) => {
-          console.log(`Typing in ${channelName} namespace:`, data.nickname)
           socket.broadcast.emit('typing', {
             channelId: channelName,
             userId: data.userId,
             nickname: data.nickname,
             typing: data.typing,
             content: data.content || '',
-          });
-        });
+          })
+        })
 
         socket.on('kick', async (data, callback) => {
           console.log(`Kick in ${channelName} namespace:`, data.nickname)
@@ -62,7 +61,7 @@ class ChannelManager {
           const isRelated = await user?.related('channels').query().where('channels.id', channel!.id).first()
           if(isRelated){
             if(channel?.adminId === data.kickedBy){
-              const ban = await Kick.query().where('user_id', user!.id)
+              const ban = await Ban.query().where('user_id', user!.id)
                 .andWhere('channel_id', channel!.id).first()
               if(!ban){
                 await Ban.create({

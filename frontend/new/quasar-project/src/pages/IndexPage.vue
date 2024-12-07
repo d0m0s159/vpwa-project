@@ -1,10 +1,5 @@
 <template>
   <q-page>
-    <div v-for="(typingUser, userId) in typingUsers" :key="userId">
-      <span @click="showTypingDialog(userId)">
-        {{ typingUser.nickname }} is typing...
-      </span>
-    </div>
     <div class="example-row-all-breakpoints">
       <div class="row justify-between main-page">
         <div class="col-auto">
@@ -56,21 +51,27 @@
             </q-input>
           </div>
         </div>
-        <div class="col-md-1"></div>
+        <div class="col-md-1">
+          <div v-for="(typingUser, userId) in typingUsers" :key="userId">
+            <span @click="showTypingDialog(userId)">
+              {{ typingUser.nickname }} is typing...
+            </span>
+          </div>
+
+          <q-dialog v-model="typingDialog">
+            <q-card>
+              <q-card-section>
+                <h6>{{ activeTypingUser.nickname }}'s Message:</h6>
+                <p>{{ activeTypingUser.content }}</p>
+              </q-card-section>
+              <q-card-actions>
+                <q-btn flat label="Close" @click="typingDialog = false" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
       </div>
     </div>
-
-    <q-dialog v-model="typingDialog">
-      <q-card>
-        <q-card-section>
-          <h6>{{ activeTypingUser.nickname }}'s Message:</h6>
-          <p>{{ activeTypingUser.content }}</p>
-        </q-card-section>
-        <q-card-actions>
-          <q-btn flat label="Close" @click="typingDialog = false" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <q-dialog v-model="joinDialog" persistent>
       <q-card>
@@ -198,26 +199,30 @@ export default {
     const sendMsg = async () => {
       const messageText = text.value.trim()
       if (messageText.startsWith('/join ') || messageText.startsWith('/create ')) {
-        const command = messageText.split(' ')[0]
-        const channelName = messageText.slice(command.length).trim()
-        console.log(authStore.user?.id)
-        const response = await api.post('/channels/join', { channelName, user: Number(authStore.user!.id) })
+        const splittedMessage = messageText.split(' ')
+        const channelName = splittedMessage[1]
+        const channelType = splittedMessage[2]?.toLowerCase() || 'public'
+        const isPublic = channelType === 'public'
+        const response = await api.post('/channels/join', { channelName, isPublic, user: Number(authStore.user!.id) })
         if (response.data.success) {
           store.join(channelName)
         }
       } else if (messageText.startsWith('/cancel')) {
         if (index.value >= 0) {
           console.log(`Deleted channel: ${store.active}`)
+          const channelName = store.active
           await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id) })
+          store.leave(channelName)
         }
       } else if (messageText.startsWith('/list')) {
         if (index.value >= 0) {
           userListDialog.value = true
         }
       } else if (messageText.startsWith('/invite')) {
+        console.log('invite')
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()
-        globalSocketManager.sendInvitation(nickname, store.active!)
+        globalSocketManager.sendInvitation(nickname, store.active!, authStore.user!.id)
       } else if (messageText.startsWith('/kick')) {
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()
@@ -230,8 +235,8 @@ export default {
         await nextTick()
         scrollToEnd()
       }
-
       text.value = ''
+      handleTyping()
     }
 
     const scrollToEnd = () => {

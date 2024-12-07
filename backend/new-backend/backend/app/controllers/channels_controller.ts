@@ -39,7 +39,7 @@ export default class ChannelsController {
         const newChannel = await Channel.create({
           name: channelName,
           adminId: (userId != 0) ? userId : null,
-          isPublic: true,
+          isPublic: request.body().isPublic,
           lastActivity: DateTime.now(),
         })
         channelManager?.ensureNamespace(channelName)
@@ -63,6 +63,8 @@ export default class ChannelsController {
             }
             const user = await User.findBy('id', userId)
             await user?.related('channels').attach([channel.id])
+
+            return { success: true, message: 'Channel has been joined' }
           }
           else{
             const invitation = await ChannelInvitation.query()
