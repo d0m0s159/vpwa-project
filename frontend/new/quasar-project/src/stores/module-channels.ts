@@ -8,7 +8,9 @@ export interface ChannelsStateInterface {
   messages: { [channel: string]: SerializedMessage[] };
   joinable: {[channel: string]: number}
   active: string | null;
+  activeUser: number | null;
   users: { [channel: string]: User[] };
+  typingUsers: {[channel:string ]: { [userId: number]: { nickname: string, content: string } }}
   notificationsEnabled: boolean;
 }
 
@@ -19,7 +21,9 @@ export const useChannelStore = defineStore('channel', {
     messages: {},
     joinable: {},
     active: null,
+    activeUser: null,
     users: {},
+    typingUsers: {},
     notificationsEnabled: true
   }),
 
@@ -37,7 +41,12 @@ export const useChannelStore = defineStore('channel', {
       return messages && messages.length > 0 ? messages[messages.length - 1] : null
     },
 
-    joinableChannels: (state) => Object.keys(state.joinable)
+    joinableChannels: (state) => Object.keys(state.joinable),
+
+    currentTypingUsers: (state) => state.active !== null ? state.typingUsers[state.active] : [],
+
+    currentActiveUser: (state) => (state.active !== null && state.activeUser !== null)
+      ? state.typingUsers[state.active][state.activeUser] : []
   },
 
   actions: {
@@ -74,6 +83,23 @@ export const useChannelStore = defineStore('channel', {
         this.messages[channel] = []
       }
       this.messages[channel].push(message)
+    },
+
+    SET_TYPING_USER (channelName: string, userId: number, nickname: string, typing: boolean, content: string) {
+      if (!this.typingUsers[channelName]) {
+        this.typingUsers[channelName] = {}
+      }
+
+      if (typing) {
+        this.typingUsers[channelName][userId] = { nickname, content }
+      } else {
+        delete this.typingUsers[channelName][userId]
+      }
+    },
+
+    async handleTyping (userId: number, nickname: string, channel: string, typing: boolean, content: string) {
+      const callback = await channelService.in(channel)?.handleTyping(userId, nickname, channel, typing, content)
+      console.log(callback)
     },
 
     async join (channel: string) {

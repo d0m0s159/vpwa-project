@@ -15,6 +15,10 @@ class ChannelSocketManager extends SocketManager {
       this.store.NEW_MESSAGE(channel, message)
     })
 
+    this.socket.on('typing', (data) => {
+      this.store.SET_TYPING_USER(data.channelId, data.userId, data.nickname, data.typing, data.content)
+    })
+
     this.socket.on('channel_deleted', () => {
       this.store.leave(channel)
     })
@@ -41,6 +45,16 @@ class ChannelSocketManager extends SocketManager {
   public kick (nickname: string): Promise<unknown> {
     const userStore = useAuthStore()
     return this.emitAsync('kick', { nickname, kickedBy: userStore.user?.id })
+  }
+
+  public handleTyping (userId: number, nickname: string, channel: string, typing: boolean, content: string): Promise<unknown> {
+    return this.emitAsync('typing', {
+      userId,
+      nickname,
+      channel,
+      typing,
+      content
+    })
   }
 }
 

@@ -44,6 +44,17 @@ class ChannelManager {
           `Socket connected to /channels/${channelName} with ID: ${socket.id}`
         )
 
+        socket.on('typing', (data) => {
+          console.log(`Typing in ${channelName} namespace:`, data.nickname)
+          socket.broadcast.emit('typing', {
+            channelId: channelName,
+            userId: data.userId,
+            nickname: data.nickname,
+            typing: data.typing,
+            content: data.content || '',
+          });
+        });
+
         socket.on('kick', async (data, callback) => {
           console.log(`Kick in ${channelName} namespace:`, data.nickname)
           const user = await User.findBy('nickname', data.nickname)

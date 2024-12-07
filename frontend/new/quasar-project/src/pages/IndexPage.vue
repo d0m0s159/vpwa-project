@@ -44,7 +44,7 @@
             </div>
           </div>
           <div class="row">
-            <q-input class="col input-message" outlined rounded v-model="text" bg-color="white" label="Message">
+            <q-input class="col input-message" outlined rounded v-model="text" bg-color="white" label="Message" @update:model-value="handleTyping">
               <template v-slot:after>
                 <q-btn round dense flat icon="send" @click="sendMsg" />
               </template>
@@ -54,6 +54,24 @@
         <div class="col-md-1"></div>
       </div>
     </div>
+
+    <div v-for="(typingUser, userId) in typingUsers" :key="userId">
+      <span @click="showTypingDialog(userId)">
+        {{ typingUser.nickname }} is typing...
+      </span>
+    </div>
+
+    <q-dialog v-model="typingDialog">
+      <q-card>
+        <q-card-section>
+          <h6>{{ activeTypingUser.nickname }}'s Message:</h6>
+          <p>{{ activeTypingUser.content }}</p>
+        </q-card-section>
+        <q-card-actions>
+          <q-btn flat label="Close" @click="typingDialog = false" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
     <q-dialog v-model="joinDialog" persistent>
       <q-card>
@@ -137,6 +155,7 @@ export default {
     store.CLEAR_CHANNEL('test-channel')
     console.log('After clearing channel:', store.joinedChannels)
     const joinableChannels = computed(() => store.joinableChannels)
+    const typingUsers = computed(() => store.currentTypingUsers)
 
     const userList = computed(() => store.currentUsers)
 
@@ -153,6 +172,16 @@ export default {
     const joinDialog = ref(false)
     const userListDialog = ref(false)
     const selectedChannel = ref('')
+
+    const typingDialog = ref(false)
+    const activeTypingUser = computed(() => store.currentActiveUser)
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const showTypingDialog = (userId: number) => {
+      store.activeUser = userId
+      console.log(store.activeUser)
+      typingDialog.value = true
+    }
 
     const loadMessages = () => {
       if (store.active) {
@@ -257,6 +286,18 @@ export default {
       loadMessages()
     }
 
+    const handleTyping = () => {
+      if (index.value >= 0) {
+        const content = text.value.trim()
+        store.handleTyping(
+          authStore.user!.id,
+          authStore.user!.nickname,
+          store.active!,
+          content.length > 0,
+          content)
+      }
+    }
+
     const isUser = (id: number) => {
       return id === authStore.user?.id
     }
@@ -287,7 +328,12 @@ export default {
       index,
       isUser,
       latestMessages,
-      userList
+      userList,
+      handleTyping,
+      typingUsers,
+      activeTypingUser,
+      showTypingDialog,
+      typingDialog
     }
   }
 }
