@@ -1,5 +1,10 @@
 <template>
   <q-page>
+    <div v-for="(typingUser, userId) in typingUsers" :key="userId">
+      <span @click="showTypingDialog(userId)">
+        {{ typingUser.nickname }} is typing...
+      </span>
+    </div>
     <div class="example-row-all-breakpoints">
       <div class="row justify-between main-page">
         <div class="col-auto">
@@ -53,12 +58,6 @@
         </div>
         <div class="col-md-1"></div>
       </div>
-    </div>
-
-    <div v-for="(typingUser, userId) in typingUsers" :key="userId">
-      <span @click="showTypingDialog(userId)">
-        {{ typingUser.nickname }} is typing...
-      </span>
     </div>
 
     <q-dialog v-model="typingDialog">
