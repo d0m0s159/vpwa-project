@@ -51,27 +51,27 @@
             </q-input>
           </div>
         </div>
-        <div class="col-md-1"></div>
+        <div class="col-md-1">
+          <div v-for="(typingUser, userId) in typingUsers" :key="userId">
+            <span @click="showTypingDialog(userId)">
+              {{ typingUser.nickname }} is typing...
+            </span>
+          </div>
+
+          <q-dialog v-model="typingDialog">
+            <q-card>
+              <q-card-section>
+                <h6>{{ activeTypingUser.nickname }}'s Message:</h6>
+                <p>{{ activeTypingUser.content }}</p>
+              </q-card-section>
+              <q-card-actions>
+                <q-btn flat label="Close" @click="typingDialog = false" />
+              </q-card-actions>
+            </q-card>
+          </q-dialog>
+        </div>
       </div>
     </div>
-
-    <div v-for="(typingUser, userId) in typingUsers" :key="userId">
-      <span @click="showTypingDialog(userId)">
-        {{ typingUser.nickname }} is typing...
-      </span>
-    </div>
-
-    <q-dialog v-model="typingDialog">
-      <q-card>
-        <q-card-section>
-          <h6>{{ activeTypingUser.nickname }}'s Message:</h6>
-          <p>{{ activeTypingUser.content }}</p>
-        </q-card-section>
-        <q-card-actions>
-          <q-btn flat label="Close" @click="typingDialog = false" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
 
     <q-dialog v-model="joinDialog" persistent>
       <q-card>
