@@ -38,6 +38,7 @@
                     :text="[message.content]"
                     :stamp="message.createdAt"
                     :sent="isUser(message.author.id)"
+                    :bg-color="isTagged(message) ? 'amber-6' : ''"
                   />
                 </q-infinite-scroll>
               </q-scroll-area>
@@ -53,9 +54,13 @@
         </div>
         <div class="col-md-1">
           <div v-for="(typingUser, userId) in typingUsers" :key="userId">
-            <span @click="showTypingDialog(userId)">
-              {{ typingUser.nickname }} is typing...
-            </span>
+            <q-card @click="showTypingDialog(userId)" class="clickable-card">
+              <q-card-section>
+                <q-card-title>
+                  {{ typingUser.nickname }} is typing...
+                </q-card-title>
+              </q-card-section>
+            </q-card>
           </div>
 
           <q-dialog v-model="typingDialog">
@@ -130,6 +135,9 @@
   }
   .main-page {
     background-color: $red-3;
+  }
+  .clickable-card {
+    cursor: pointer;
   }
 </style>
 
@@ -298,6 +306,10 @@ export default {
       }
     }
 
+    const isTagged = (message: SerializedMessage) => {
+      return message.content.includes(`@${authStore.user?.nickname}`)
+    }
+
     const isUser = (id: number) => {
       return id === authStore.user?.id
     }
@@ -333,7 +345,8 @@ export default {
       typingUsers,
       activeTypingUser,
       showTypingDialog,
-      typingDialog
+      typingDialog,
+      isTagged
     }
   }
 }
