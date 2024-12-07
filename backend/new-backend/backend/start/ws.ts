@@ -44,7 +44,7 @@ app.ready(() => {
             const invitation = await ChannelInvitation.create({
               channelId: channel.id,
               targetUserId: user.id,
-              performedBy: data.userId
+              performedBy: data.invitedBy
             })
             console.log(socketId)
             if(socketId){
