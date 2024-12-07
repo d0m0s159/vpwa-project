@@ -4,10 +4,10 @@ export interface SerializedMessage {
     createdAt: string
     updatedAt: string
     id: number
-    author: User
+    author: UserInterface
 }
 
-export interface User {
+export interface UserInterface {
     id: number
     nickname: string
     email: string

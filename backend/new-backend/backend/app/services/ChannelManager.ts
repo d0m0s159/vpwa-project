@@ -2,7 +2,7 @@
 
 import Ws from '#services/Ws'
 import Channel from '#models/channel'
-import { SerializedMessage } from '../contracts/message.js'
+import { SerializedMessage, UserInterface } from '../contracts/message.js'
 import Message from '#models/message'
 import { DateTime } from 'luxon'
 import User from '#models/user'
@@ -169,6 +169,27 @@ class ChannelManager {
             else{
               callback(null, [])};
             }
+        })
+
+        socket.on('loadUsers', async (callback) => {
+          const channel = await Channel.findBy('name', channelName)
+
+          if (!channel) {
+            return callback({ error: 'Channel not found' });
+          }
+
+          const users = await channel?.related('users').query()
+          const callbackUsers: UserInterface[] = []
+          for(const user of users){
+            const tempUser: UserInterface = {
+              id: user.id,
+              nickname: user.nickname!,
+              email: user.email
+            }
+            callbackUsers.push(tempUser)
+          }
+
+          callback(null, callbackUsers);
         })
 
         socket.on('disconnect', (reason) => {

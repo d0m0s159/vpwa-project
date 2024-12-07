@@ -29,6 +29,9 @@ export const useChannelStore = defineStore('channel', {
     currentMessages: (state) =>
       state.active !== null ? state.messages[state.active] : [],
 
+    currentUsers: (state) =>
+      state.active !== null ? state.users[state.active] : [],
+
     lastMessageOf: (state) => (channel: string) => {
       const messages = state.messages[channel]
       return messages && messages.length > 0 ? messages[messages.length - 1] : null
@@ -46,6 +49,10 @@ export const useChannelStore = defineStore('channel', {
     LOADING_SUCCESS (channel: string, messages: SerializedMessage[]) {
       this.loading = false
       this.messages[channel] = messages
+    },
+
+    SET_USERS (channel: string, users: User[]) {
+      this.users[channel] = users
     },
 
     LOADING_ERROR (error: Error) {
@@ -75,8 +82,10 @@ export const useChannelStore = defineStore('channel', {
         const newChannel = await channelService.join(channel)
         console.log(newChannel)
         const messages = await newChannel.loadMessages()
+        const users = await newChannel.loadUsers()
 
         this.LOADING_SUCCESS(channel, messages)
+        this.SET_USERS(channel, users)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         this.LOADING_ERROR(err)

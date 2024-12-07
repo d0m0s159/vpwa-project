@@ -77,14 +77,11 @@
         <q-card-section>
           <div class="text-h6">Users in {{ channels[index] }}</div>
         </q-card-section>
-
-        <!--
         <q-card-section>
-          <div v-for="user in channels[index]?" :key="user.name">
-            {{ user.name }}
+          <div v-for="(user, id) in userList" :key="id">
+            {{ user.nickname }}
           </div>
         </q-card-section>
-      -->
         <q-card-actions align="right">
           <q-btn flat label="Close" color="primary" v-close-popup />
         </q-card-actions>
@@ -140,6 +137,8 @@ export default {
     store.CLEAR_CHANNEL('test-channel')
     console.log('After clearing channel:', store.joinedChannels)
     const joinableChannels = computed(() => store.joinableChannels)
+
+    const userList = computed(() => store.currentUsers)
 
     const messages = ref<SerializedMessage[]>([])
     const fullMessages = ref<SerializedMessage[]>([])
@@ -287,7 +286,8 @@ export default {
       selectChannel,
       index,
       isUser,
-      latestMessages
+      latestMessages,
+      userList
     }
   }
 }
