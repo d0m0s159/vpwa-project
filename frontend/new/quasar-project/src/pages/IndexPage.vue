@@ -142,9 +142,9 @@
 </style>
 
 <script lang="ts">
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import { useChannelStore } from 'src/stores/module-channels'
-import { QScrollArea } from 'quasar'
+import { QScrollArea, useQuasar } from 'quasar'
 import { SerializedMessage } from 'src/contracts'
 import { useAuthStore } from 'src/stores/useAuthStore'
 import { api } from 'src/boot/axios'
@@ -152,6 +152,7 @@ import globalSocketManager from 'src/services/GlobalSocketManager'
 
 export default {
   setup () {
+    const $q = useQuasar()
     const store = useChannelStore()
     const authStore = useAuthStore()
     const channels = computed(() => store.joinedChannels)
@@ -343,6 +344,19 @@ export default {
       return store.currentMessages
     })
 
+    watch(() => store.messages, () => {
+      if (document.hidden) {
+        console.log('sending notification')
+        const latestMessage = store.lastMessageOf(store.active!)
+        if (latestMessage) {
+          // eslint-disable-next-line no-new
+          new Notification('New Message', {
+            body: latestMessage.content
+          })
+        }
+      }
+    })
+
     return {
       channels,
       joinableChannels,
@@ -370,7 +384,8 @@ export default {
       activeTypingUser,
       showTypingDialog,
       typingDialog,
-      isTagged
+      isTagged,
+      $q
     }
   }
 }
