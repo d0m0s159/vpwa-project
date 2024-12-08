@@ -219,8 +219,17 @@ export default {
         if (index.value >= 0) {
           console.log(`Deleted channel: ${store.active}`)
           const channelName = store.active
-          await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id) })
+          await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id), quit: 'cancel' })
           store.leave(channelName)
+        }
+      } else if (messageText.startsWith('/quit')) {
+        if (index.value >= 0) {
+          console.log(`Deleted channel: ${store.active}`)
+          const channelName = store.active
+          const response = await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id), quit: 'quit' })
+          if (response.data.success === true) {
+            store.leave(channelName)
+          }
         }
       } else if (messageText.startsWith('/list')) {
         if (index.value >= 0) {
@@ -230,7 +239,12 @@ export default {
         console.log('invite')
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()
-        globalSocketManager.sendInvitation(nickname, store.active!, authStore.user!.id)
+        globalSocketManager.sendInvitation(nickname, store.active!, authStore.user!.id, 'invite')
+      } else if (messageText.startsWith('/revoke')) {
+        console.log('revoke')
+        const command = messageText.split(' ')[0]
+        const nickname = messageText.slice(command.length).trim()
+        globalSocketManager.sendInvitation(nickname, store.active!, authStore.user!.id, 'revoke')
       } else if (messageText.startsWith('/kick')) {
         const command = messageText.split(' ')[0]
         const nickname = messageText.slice(command.length).trim()

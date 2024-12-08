@@ -55,7 +55,6 @@ class ChannelManager {
         })
 
         socket.on('kick', async (data, callback) => {
-          console.log(`Kick in ${channelName} namespace:`, data.nickname)
           const user = await User.findBy('nickname', data.nickname)
           const channel = await Channel.findBy('name', channelName)
           const isRelated = await user?.related('channels').query().where('channels.id', channel!.id).first()
@@ -64,6 +63,7 @@ class ChannelManager {
               const ban = await Ban.query().where('user_id', user!.id)
                 .andWhere('channel_id', channel!.id).first()
               if(!ban){
+                console.log(`Ban in ${channelName} namespace:`, data.nickname)
                 await Ban.create({
                   userId: user?.id,
                   channelId: channel?.id

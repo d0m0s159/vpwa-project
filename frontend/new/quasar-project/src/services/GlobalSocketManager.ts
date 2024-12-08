@@ -20,8 +20,8 @@ export class GlobalSocketManager extends SocketManager {
     return this.emitAsync('registerUser', { nickname: userNickname })
   }
 
-  sendInvitation (userNickname: string, channelName: string, invitedBy: number) {
-    return this.emitAsync('invitation', { userNickname, channelName, invitedBy })
+  sendInvitation (userNickname: string, channelName: string, invitedBy: number, revoke: string) {
+    return this.emitAsync('invitation', { userNickname, channelName, invitedBy, revoke })
   }
 }
 

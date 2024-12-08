@@ -102,7 +102,11 @@ export default class ChannelsController {
           await channel.delete()
           return { success: true, message: 'Channel has been deleted' }
         }
-        await user?.related('channels').detach([channel.id])
+        if(request.body().quit !== 'quit'){
+          await user?.related('channels').detach([channel.id])
+          return { success: true, message: 'You left the channel' }
+        }
+        return { success: false, message: 'You cannot use quit' }
       }
       else{
         return { success: false, message: 'Channel does not exist' }

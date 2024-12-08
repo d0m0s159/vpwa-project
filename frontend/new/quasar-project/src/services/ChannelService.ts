@@ -2,6 +2,7 @@ import { RawMessage, SerializedMessage, User } from 'src/contracts'
 import { SocketManager } from './SocketManager'
 import { useChannelStore } from 'src/stores/module-channels'
 import { useAuthStore } from 'src/stores/useAuthStore'
+import { api } from 'src/boot/axios'
 
 // creating instance of this class automatically connects to given socket.io namespace
 // subscribe is called with boot params, so you can use it to dispatch actions for socket events
@@ -23,7 +24,9 @@ class ChannelSocketManager extends SocketManager {
       this.store.leave(channel)
     })
 
-    this.socket.on('ban', () => {
+    this.socket.on('ban', async () => {
+      const authStore = useAuthStore()
+      await api.post('/channels/leave', { channelName: channel, user: Number(authStore.user!.id), quit: 'cancel' })
       this.store.leave(channel)
     })
   }
