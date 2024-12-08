@@ -1,3 +1,3 @@
 link: https://github.com/d0m0s159/vpwa-project/
 
-assignment commit hash: 2bdfab578b15320546054d6b5abeb52510887f43
+assignment commit hash: b1b7acb57c24dadbb5c59ba8d56b1bb80d847d95
