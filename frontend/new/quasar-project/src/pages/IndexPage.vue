@@ -304,6 +304,8 @@ export default {
     }
 
     const selectChannel = (channelIndex: number, channelName: string) => {
+      text.value = ''
+      handleTyping()
       console.log(`Selected channel index before: ${index.value}`)
       index.value = channelIndex
       store.SET_ACTIVE(channelName)
