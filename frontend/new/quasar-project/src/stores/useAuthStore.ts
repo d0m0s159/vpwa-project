@@ -57,8 +57,10 @@ export const useAuthStore = defineStore('auth', {
           }
         }
         this.user = user
+        console.log(this.user)
         if (user) {
           user!.status = 'active'
+          await globalSocketManager.setStatus(this.user!)
           globalSocketManager.registerUser(this.user!.nickname)
         }
         this.status = 'success'
@@ -102,10 +104,10 @@ export const useAuthStore = defineStore('auth', {
       this.status = 'pending'
       console.log(this.user)
       try {
-        this.user!.status = 'offline'
-        await globalSocketManager.setStatus(this.user!)
         await authService.logout()
         await store.leave(null)
+        this.user!.status = 'offline'
+        await globalSocketManager.setStatus(this.user!)
         this.user = null
         this.status = 'success'
         authManager.removeToken()
