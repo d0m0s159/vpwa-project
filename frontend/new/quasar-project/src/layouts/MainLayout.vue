@@ -34,6 +34,10 @@
                 <q-avatar icon="directions" />
                 <q-item-section>Log out</q-item-section>
               </q-item>
+              <q-item v-if="notificationPermission !== granted" clickable v-close-popup @click="requestNotificationPermission">
+                <q-avatar icon="notifications" />
+                <q-item-section>Enable Notifications</q-item-section>
+              </q-item>
             </q-list>
           </q-menu>
 
@@ -118,7 +122,7 @@
 </style>
 
 <script lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useChannelStore } from 'src/stores/module-channels'
 import { useAuthStore } from 'src/stores/useAuthStore'
 import globalSocketManager from 'src/services/GlobalSocketManager'
@@ -131,6 +135,7 @@ export default {
     const rightDrawerOpen = ref(true)
 
     const statusDialogOpen = ref(false)
+    const notificationPermission = ref(Notification.permission)
     const channelStore = useChannelStore()
     const authStore = useAuthStore()
     const user = computed(() => authStore.user)
@@ -175,9 +180,25 @@ export default {
 
     const selectedChannelName = computed(() => channelStore.active)
 
+    const requestNotificationPermission = () => {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            console.log('Notification permission granted.')
+          } else {
+            console.log('Notification permission denied.')
+          }
+        })
+      }
+    }
+
     const logOut = () => {
       authStore.logout()
     }
+
+    onMounted(() => {
+      notificationPermission.value = Notification.permission
+    })
 
     return {
       leftDrawerOpen,
@@ -188,7 +209,9 @@ export default {
       channelStore,
       selectedChannelName,
       user,
-      logOut
+      logOut,
+      requestNotificationPermission,
+      notificationPermission
     }
   }
 }
