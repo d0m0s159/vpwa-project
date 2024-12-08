@@ -20,7 +20,24 @@ app.ready(() => {
   io?.on('connection', (socket) => {
     console.log(`Client connected: ${socket.id}`)
 
-    socket.on('registerUser', (data, callback) => {
+    socket.on('registerUser', async (data, callback) => {
+      const user = await User.findBy('nickname', data.nickname)
+      if(user){
+        user.status = 'active'
+        await user.save()
+        const channels = await user.related('channels').query()
+        channels.forEach((channel) => {
+          const namespace = channelManager?.getNamespace(channel.name)
+          if (namespace) {
+            namespace.emit('statusUpdate', {
+              userId: user.id,
+              nickname: user.nickname,
+              status: user.status,
+              channel: channel.name
+            })
+          }
+        })
+      }
       userSocketMap.set(data.nickname, socket.id)
       console.log(`User ${data.nickname} registered with socket ID: ${socket.id}`)
 
@@ -114,11 +131,30 @@ app.ready(() => {
       if (callback) callback(null, { status: 'success' })
     })
 
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async () => {
       for (const [nickname, socketId] of userSocketMap.entries()) {
         if (socketId === socket.id) {
           userSocketMap.delete(nickname)
           console.log(`User ${nickname} disconnected and removed from mapping`)
+
+          const user = await User.findBy('nickname', nickname)
+          if(user){
+            user.status = 'offline'
+            await user.save()
+
+            const channels = await user.related('channels').query()
+            channels.forEach((channel) => {
+              const namespace = channelManager?.getNamespace(channel.name)
+              if (namespace) {
+                namespace.emit('statusUpdate', {
+                  userId: user.id,
+                  nickname: user.nickname,
+                  status: user.status,
+                  channel: channel.name
+                })
+              }
+            })
+          }
           break
         }
       }

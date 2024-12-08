@@ -7,7 +7,6 @@ export default class AuthController {
   //table data needs modification
   async register({ request }: HttpContext) {
     const data : any = await request.validateUsing(registerValidator)
-    data.status = 'active'
     
     
     const user = await User.create(data);
