@@ -220,6 +220,8 @@ export default {
           console.log(`Deleted channel: ${store.active}`)
           const channelName = store.active
           await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id), quit: 'cancel' })
+          text.value = ''
+          handleTyping()
           store.leave(channelName)
         }
       } else if (messageText.startsWith('/quit')) {
@@ -227,6 +229,8 @@ export default {
           console.log(`Deleted channel: ${store.active}`)
           const channelName = store.active
           const response = await api.post('/channels/leave', { channelName: store.active, user: Number(authStore.user!.id), quit: 'quit' })
+          text.value = ''
+          handleTyping()
           if (response.data.success === true) {
             store.leave(channelName)
           }

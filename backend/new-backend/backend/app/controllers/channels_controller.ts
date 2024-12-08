@@ -22,7 +22,7 @@ export default class ChannelsController {
       const invitations = await ChannelInvitation.query().where('target_user_id', userId)
       const joinableChannels = [] as {name:string, invitationId:number}[]
       for(const invitation of invitations){
-        const channel = await Channel.findBy('id', invitation.id)
+        const channel = await Channel.findBy('id', invitation.channelId)
         joinableChannels.push({name: channel!.name, invitationId: invitation.id})
       }
       console.log(joinableChannels)
