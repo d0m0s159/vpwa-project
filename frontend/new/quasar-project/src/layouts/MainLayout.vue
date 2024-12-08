@@ -38,6 +38,10 @@
                 <q-avatar icon="notifications" />
                 <q-item-section>Enable Notifications</q-item-section>
               </q-item>
+              <q-item clickable @click="toggleNotifications">
+                <q-avatar icon="notifications" />
+                <q-item-section>{{ notificationsEnabled ? 'Only Mentions' : 'All Notifications' }}</q-item-section>
+              </q-item>
             </q-list>
           </q-menu>
 
@@ -178,6 +182,10 @@ export default {
       statusDialogOpen.value = false
     }
 
+    const toggleNotifications = () => {
+      channelStore.toggleNotifications()
+    }
+
     const selectedChannelName = computed(() => channelStore.active)
 
     const requestNotificationPermission = () => {
@@ -211,7 +219,9 @@ export default {
       user,
       logOut,
       requestNotificationPermission,
-      notificationPermission
+      notificationPermission,
+      toggleNotifications,
+      notificationsEnabled: computed(() => channelStore.notificationsEnabled)
     }
   }
 }

@@ -87,9 +87,18 @@ export const useChannelStore = defineStore('channel', {
       this.messages[channel].push(message)
       // const $q = useQuasar()
       const authStore = useAuthStore()
-      if (authStore.user && authStore.user.id !== message.author.id && authStore.user.status !== 'dnd') {
+      if ((authStore.user && authStore.user.id !== message.author.id && authStore.user.status !== 'dnd' && this.notificationsEnabled) || (authStore.user && authStore.user.id !== message.author.id && authStore.user.status !== 'dnd' && !this.notificationsEnabled && this.isTagged(message))) {
         this.send_notification(message.author.nickname, message.content)
       }
+    },
+
+    isTagged (message: SerializedMessage) {
+      const authStore = useAuthStore()
+      return message.content.includes(`@${authStore.user?.nickname}`)
+    },
+
+    toggleNotifications () {
+      this.notificationsEnabled = !this.notificationsEnabled
     },
 
     send_notification (author: string, message: string) {
