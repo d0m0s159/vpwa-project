@@ -122,6 +122,8 @@ import { ref, computed } from 'vue'
 import { useChannelStore } from 'src/stores/module-channels'
 import { useAuthStore } from 'src/stores/useAuthStore'
 import globalSocketManager from 'src/services/GlobalSocketManager'
+import { api } from 'src/boot/axios'
+import { channelService } from 'src/services'
 
 export default {
   setup () {
@@ -137,9 +139,37 @@ export default {
       statusDialogOpen.value = true
     }
 
-    const setStatus = (status: 'active' | 'dnd' | 'offline') => {
+    const setStatus = async (status: 'active' | 'dnd' | 'offline') => {
+      const oldStatus = authStore.user!.status
       authStore.setUserStatus(status)
       globalSocketManager.setStatus(authStore.user!)
+
+      if (oldStatus === 'offline' && status !== 'offline') {
+        globalSocketManager.reconnectSocket()
+        channelStore.messages = {}
+        channelStore.users = {}
+        const { data } = await api.post('/load/channels/', { id: authStore.user?.id })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        for (const channel of data.channels) {
+          try {
+            channelStore.join(channel.name)
+          } catch (err) {
+            console.error(`Error joining channel ${channel.name}:`, err)
+          }
+        }
+
+        for (const channel of data.joinableChannels) {
+          try {
+            console.log(`${channel.name},${channel.invitationId}`)
+            channelStore.addJoinable(channel.name, channel.invitationId)
+          } catch (err) {
+            console.error(`Error joining channel ${channel.name}:`, err)
+          }
+        }
+      } else if (status === 'offline') {
+        globalSocketManager.disconnectSocket()
+        channelService.handleUserStatusChange()
+      }
       statusDialogOpen.value = false
     }
 

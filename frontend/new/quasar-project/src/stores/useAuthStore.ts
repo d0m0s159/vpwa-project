@@ -36,6 +36,7 @@ export const useAuthStore = defineStore('auth', {
       this.errors = []
       try {
         const user = await authService.me()
+        user!.status = 'active'
         if (user?.id !== this.user?.id) {
           const { data } = await api.post('/load/channels/', { id: user?.id })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

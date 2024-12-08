@@ -28,6 +28,20 @@ export class GlobalSocketManager extends SocketManager {
   setStatus (user: User) {
     return this.emitAsync('statusUpdate', { user })
   }
+
+  public disconnectSocket (): void {
+    if (this.socket.connected) {
+      this.socket.disconnect()
+      console.log(`${this.namespace} socket disconnected`)
+    }
+  }
+
+  public reconnectSocket (): void {
+    if (!this.socket.connected) {
+      this.socket.connect()
+      console.log(`${this.namespace} socket reconnected`)
+    }
+  }
 }
 
 const globalSocketManager = new GlobalSocketManager()

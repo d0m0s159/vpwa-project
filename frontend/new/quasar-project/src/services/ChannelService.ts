@@ -69,6 +69,13 @@ class ChannelSocketManager extends SocketManager {
       user
     })
   }
+
+  public disconnectSocket (): void {
+    if (this.socket.connected) {
+      this.socket.disconnect()
+      console.log(`${this.namespace} socket disconnected`)
+    }
+  }
 }
 
 class ChannelService {
@@ -99,6 +106,14 @@ class ChannelService {
 
   public in (name: string): ChannelSocketManager | undefined {
     return this.channels.get(name)
+  }
+
+  public handleUserStatusChange (): void {
+    this.channels.forEach((channel, name) => {
+      channel.destroy()
+      console.log(`Left channel: ${name}`)
+    })
+    this.channels.clear()
   }
 }
 
