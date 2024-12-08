@@ -14,6 +14,10 @@ class ChannelManager {
 
   private namespaces: Map<string, ReturnType<typeof this.io.of>> = new Map()
 
+  public getNamespace(channelName: string): ReturnType<typeof this.io.of> | null {
+    return this.namespaces.get(channelName) || null;
+  }
+
   constructor() {
     if (this.io) {
       this.loadChannels()
@@ -143,7 +147,8 @@ class ChannelManager {
             author: {
               id: user!.id,
               nickname: user!.nickname!,
-              email: user!.email
+              email: user!.email,
+              status: user!.status
             }
           }
 
@@ -167,7 +172,8 @@ class ChannelManager {
               author: {
                 id: message.userId,
                 nickname: user!.nickname!,
-                email: user!.email
+                email: user!.email,
+                status: user!.status
               }
             }
             serialized_messages.push(temp_message)
@@ -194,7 +200,8 @@ class ChannelManager {
             const tempUser: UserInterface = {
               id: user.id,
               nickname: user.nickname!,
-              email: user.email
+              email: user.email,
+              status: user.status
             }
             callbackUsers.push(tempUser)
           }

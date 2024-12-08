@@ -1,3 +1,4 @@
+import { User } from 'src/contracts'
 import { SocketManager } from 'src/services/SocketManager'
 import { useChannelStore } from 'src/stores/module-channels'
 
@@ -22,6 +23,10 @@ export class GlobalSocketManager extends SocketManager {
 
   sendInvitation (userNickname: string, channelName: string, invitedBy: number, revoke: string) {
     return this.emitAsync('invitation', { userNickname, channelName, invitedBy, revoke })
+  }
+
+  setStatus (user: User) {
+    return this.emitAsync('statusUpdate', { user })
   }
 }
 

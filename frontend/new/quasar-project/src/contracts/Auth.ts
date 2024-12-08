@@ -23,4 +23,5 @@ export interface User {
 id: number
 email: string
 nickname: string
+status: 'active' | 'dnd' | 'offline'
 }

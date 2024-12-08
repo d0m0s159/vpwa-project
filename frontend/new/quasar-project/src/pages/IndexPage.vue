@@ -102,7 +102,7 @@
         </q-card-section>
         <q-card-section>
           <div v-for="(user, id) in userList" :key="id">
-            {{ user.nickname }}
+            {{ user.nickname }}: {{ user.status }}
           </div>
         </q-card-section>
         <q-card-actions align="right">

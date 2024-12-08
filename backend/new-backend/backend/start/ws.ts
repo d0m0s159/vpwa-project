@@ -84,6 +84,36 @@ app.ready(() => {
       if (callback) callback(null, { status: 'no user' })
     })
 
+    socket.on('statusUpdate', async (data, callback) => {
+      const newUser = data.user
+  
+      const user = await User.findBy('id', newUser.id)
+      if (!user) {
+        if (callback) callback({ error: 'User not found' })
+        return
+      }
+  
+      user.status = newUser.status
+      await user.save()
+  
+      const channels = await user.related('channels').query()
+      channels.forEach((channel) => {
+        const namespace = channelManager?.getNamespace(channel.name)
+        if (namespace) {
+          namespace.emit('statusUpdate', {
+            userId: user.id,
+            nickname: user.nickname,
+            status: newUser.status,
+            channel: channel.name
+          })
+        }
+      })
+  
+      console.log(`Updated status for ${newUser.nickname} to ${newUser.status}`)
+  
+      if (callback) callback(null, { status: 'success' })
+    })
+
     socket.on('disconnect', () => {
       for (const [nickname, socketId] of userSocketMap.entries()) {
         if (socketId === socket.id) {

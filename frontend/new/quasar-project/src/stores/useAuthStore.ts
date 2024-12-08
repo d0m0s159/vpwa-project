@@ -112,6 +112,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
+    async setUserStatus (status: 'active' | 'dnd' | 'offline') {
+      this.user!.status = status
+      await api.post('/user/setStatus', { user: this.user })
+    },
+
     // Helper method to handle errors and conform to the expected error type
     handleError (error: unknown) {
       this.status = 'error'

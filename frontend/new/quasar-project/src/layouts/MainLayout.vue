@@ -38,7 +38,7 @@
           </q-menu>
 
         </q-btn>
-        <div :class="['status-indicator', userStore.user.status]"></div>
+        <div :class="['status-indicator', user!.status]"></div>
 
       </q-toolbar>
     </q-header>
@@ -54,9 +54,9 @@
         </q-card-section>
 
         <q-card-section>
-          <q-btn flat label="Online" color="green" @click="setStatus('online')" />
+          <q-btn flat label="active" color="green" @click="setStatus('active')" />
           <q-btn flat label="Offline" color="gray" @click="setStatus('offline')" />
-          <q-btn flat label="DND" color="red" @click="setStatus('dnd')" />
+          <q-btn flat label="dnd" color="red" @click="setStatus('dnd')" />
         </q-card-section>
 
         <q-card-actions align="right">
@@ -95,7 +95,7 @@
     right: 7px;
   }
 
-  .status-indicator.online {
+  .status-indicator.active {
     background-color: green;
   }
 
@@ -119,9 +119,9 @@
 
 <script lang="ts">
 import { ref, computed } from 'vue'
-import { useCurrentUserStore } from 'src/components/stores/useCurrentUserStore'
 import { useChannelStore } from 'src/stores/module-channels'
 import { useAuthStore } from 'src/stores/useAuthStore'
+import globalSocketManager from 'src/services/GlobalSocketManager'
 
 export default {
   setup () {
@@ -129,16 +129,17 @@ export default {
     const rightDrawerOpen = ref(true)
 
     const statusDialogOpen = ref(false)
-    const userStore = useCurrentUserStore()
     const channelStore = useChannelStore()
     const authStore = useAuthStore()
+    const user = computed(() => authStore.user)
 
     const openStatusDialog = () => {
       statusDialogOpen.value = true
     }
 
-    const setStatus = (status: string) => {
-      userStore.setUserStatus(status)
+    const setStatus = (status: 'active' | 'dnd' | 'offline') => {
+      authStore.setUserStatus(status)
+      globalSocketManager.setStatus(authStore.user!)
       statusDialogOpen.value = false
     }
 
@@ -154,9 +155,9 @@ export default {
       statusDialogOpen,
       openStatusDialog,
       setStatus,
-      userStore,
       channelStore,
       selectedChannelName,
+      user,
       logOut
     }
   }

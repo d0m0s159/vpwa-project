@@ -11,4 +11,5 @@ export interface UserInterface {
     id: number
     nickname: string
     email: string
+    status: 'active' | 'dnd' | 'offline'
 }

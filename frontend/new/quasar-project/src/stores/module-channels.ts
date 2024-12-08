@@ -97,6 +97,19 @@ export const useChannelStore = defineStore('channel', {
       }
     },
 
+    updateUser (userId: number, userStatus: 'active' | 'dnd' | 'offline', channel: string) {
+      if (this.users[channel]) {
+        const user = this.users[channel].find(user => user.id === userId)
+        if (user) {
+          user.status = userStatus
+        } else {
+          console.error(`User with id ${userId} not found in channel ${channel}`)
+        }
+      } else {
+        console.error(`Channel ${channel} does not exist in users`)
+      }
+    },
+
     async handleTyping (userId: number, nickname: string, channel: string, typing: boolean, content: string) {
       const callback = await channelService.in(channel)?.handleTyping(userId, nickname, channel, typing, content)
       console.log(callback)

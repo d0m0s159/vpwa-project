@@ -29,6 +29,10 @@ class ChannelSocketManager extends SocketManager {
       await api.post('/channels/leave', { channelName: channel, user: Number(authStore.user!.id), quit: 'cancel' })
       this.store.leave(channel)
     })
+
+    this.socket.on('statusUpdate', (data) => {
+      this.store.updateUser(data.userId, data.status, data.channel)
+    })
   }
 
   public addMessage (message: RawMessage): Promise<SerializedMessage> {
@@ -57,6 +61,12 @@ class ChannelSocketManager extends SocketManager {
       channel,
       typing,
       content
+    })
+  }
+
+  public changeStatus (user: User): Promise<User> {
+    return this.emitAsync('changeStatus', {
+      user
     })
   }
 }
