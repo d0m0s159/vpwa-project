@@ -45,24 +45,46 @@ app.ready(() => {
         const isRelated = await user?.related('channels').query().where('channels.id', channel.id).first()
 
         if(!findInvitation && !isRelated){
+          const ban = await Ban.query().where('user_id', user!.id)
+                .andWhere('channel_id', channel!.id).first()
           if(channel.isPublic && data.revoke !== 'revoke'){
-            const invitation = await ChannelInvitation.create({
-              channelId: channel.id,
-              targetUserId: user.id,
-              performedBy: data.invitedBy
-            })
-            console.log(socketId)
-            if(socketId){
-              console.log('invitation sending')
-              io.to(socketId).emit('invitation', {
-                invitationId: invitation.id,
-                channel: channel.name,
-                message: 'You have been invited to a new channel!'
+            if(ban) {
+              if(channel.adminId === data.invitedBy){
+                ban.delete()
+                const invitation = await ChannelInvitation.create({
+                  channelId: channel.id,
+                  targetUserId: user.id,
+                  performedBy: data.invitedBy
+                })
+                console.log(socketId)
+                if(socketId){
+                  console.log('invitation sending')
+                  io.to(socketId).emit('invitation', {
+                    invitationId: invitation.id,
+                    channel: channel.name,
+                    message: 'You have been invited to a new channel!'
+                  })
+                }
+              }
+            } else {
+              const invitation = await ChannelInvitation.create({
+                channelId: channel.id,
+                targetUserId: user.id,
+                performedBy: data.invitedBy
               })
+              console.log(socketId)
+              if(socketId){
+                console.log('invitation sending')
+                io.to(socketId).emit('invitation', {
+                  invitationId: invitation.id,
+                  channel: channel.name,
+                  message: 'You have been invited to a new channel!'
+                })
+              }
             }
           }
           else{
-            if(channel.adminId === data.invitedBy){
+            if(channel.adminId === data.invitedBy && !channel.isPublic){
               const ban = await Ban.query().where('user_id', user!.id)
                 .andWhere('channel_id', channel!.id).first()
               ban?.delete()

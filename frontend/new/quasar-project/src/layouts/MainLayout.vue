@@ -34,7 +34,7 @@
                 <q-avatar icon="directions" />
                 <q-item-section>Log out</q-item-section>
               </q-item>
-              <q-item v-if="notificationPermission !== granted" clickable v-close-popup @click="requestNotificationPermission">
+              <q-item v-if="notificationPermission !== 'granted'" clickable v-close-popup @click="requestNotificationPermission">
                 <q-avatar icon="notifications" />
                 <q-item-section>Enable Notifications</q-item-section>
               </q-item>
