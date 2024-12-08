@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { SerializedMessage, RawMessage, User } from 'src/contracts'
 import { channelService } from 'src/services'
+import { useAuthStore } from './useAuthStore'
+// import { useQuasar } from 'quasar'
 
 export interface ChannelsStateInterface {
   loading: boolean;
@@ -83,6 +85,20 @@ export const useChannelStore = defineStore('channel', {
         this.messages[channel] = []
       }
       this.messages[channel].push(message)
+      // const $q = useQuasar()
+      const authStore = useAuthStore()
+      if (authStore.user && authStore.user.id !== message.author.id && authStore.user.status !== 'dnd') {
+        this.send_notification(message.author.nickname, message.content)
+      }
+    },
+
+    send_notification (author: string, message: string) {
+      console.log('sending notification')
+      // eslint-disable-next-line no-new
+      new Notification(author, {
+        body: message,
+        icon: '/path/to/icon.png'
+      })
     },
 
     SET_TYPING_USER (channelName: string, userId: number, nickname: string, typing: boolean, content: string) {
