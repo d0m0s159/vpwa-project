@@ -10,7 +10,7 @@ export interface ChannelsStateInterface {
   active: string | null;
   activeUser: number | null;
   users: { [channel: string]: User[] };
-  typingUsers: {[channel:string ]: { [userId: number]: { nickname: string, content: string } }}
+  typingUsers: {[channel:string ]: { [userId: number]: { nickname: string, content: string, } }}
   notificationsEnabled: boolean;
 }
 
