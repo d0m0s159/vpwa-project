@@ -37,7 +37,6 @@ export const useAuthStore = defineStore('auth', {
       try {
         const user = await authService.me()
         if (user?.id !== this.user?.id) {
-          user!.status = 'active'
           const { data } = await api.post('/load/channels/', { id: user?.id })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           for (const channel of data.channels) {
@@ -59,6 +58,7 @@ export const useAuthStore = defineStore('auth', {
         }
         this.user = user
         if (user) {
+          user!.status = 'active'
           globalSocketManager.registerUser(this.user!.nickname)
         }
         this.status = 'success'
@@ -102,6 +102,8 @@ export const useAuthStore = defineStore('auth', {
       this.status = 'pending'
       console.log(this.user)
       try {
+        this.user!.status = 'offline'
+        await globalSocketManager.setStatus(this.user!)
         await authService.logout()
         await store.leave(null)
         this.user = null

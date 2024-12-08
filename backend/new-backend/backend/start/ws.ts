@@ -25,18 +25,6 @@ app.ready(() => {
       if(user){
         user.status = 'active'
         await user.save()
-        const channels = await user.related('channels').query()
-        channels.forEach((channel) => {
-          const namespace = channelManager?.getNamespace(channel.name)
-          if (namespace) {
-            namespace.emit('statusUpdate', {
-              userId: user.id,
-              nickname: user.nickname,
-              status: user.status,
-              channel: channel.name
-            })
-          }
-        })
       }
       userSocketMap.set(data.nickname, socket.id)
       console.log(`User ${data.nickname} registered with socket ID: ${socket.id}`)

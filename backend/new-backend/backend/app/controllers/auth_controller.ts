@@ -24,6 +24,8 @@ export default class AuthController {
   
   async logout({ auth }: HttpContext) {
     const user = auth.user!
+    user.status = 'offline'
+    await user.save()
     await User.accessTokens.delete(user, user.currentAccessToken.identifier)
     return {message: 'sucess'}
   }
